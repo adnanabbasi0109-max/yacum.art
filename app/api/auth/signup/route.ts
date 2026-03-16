@@ -61,9 +61,10 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     console.error("Signup error:", error);
-    return NextResponse.json(
-      { error: "Something went wrong" },
-      { status: 500 }
-    );
+    const message =
+      error instanceof Error && error.message.includes("MONGODB_URI")
+        ? "Database not configured. Please set MONGODB_URI in .env.local"
+        : "Something went wrong";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
