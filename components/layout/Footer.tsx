@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -10,13 +11,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <span className="font-[family-name:var(--font-display)] text-xl font-semibold text-text-primary">
-                YACUM
-              </span>
-              <span className="text-gold text-xs font-[family-name:var(--font-mono)]">
-                .ART
-              </span>
+            <div className="mb-4">
+              <Image src="/logo.png" alt="Yacum Art" width={100} height={34} />
             </div>
             <p className="text-text-secondary text-sm leading-relaxed max-w-xs">
               Premium digital paintings inspired by Quranic verses. Each piece

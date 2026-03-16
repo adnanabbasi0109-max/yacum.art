@@ -5,6 +5,10 @@ export const metadata: Metadata = {
   title: "YACUM.ART — Quranic Verse Art",
   description:
     "Premium digital paintings themed on Quranic verses. Each piece embeds a QR code linking to verse recitation and layered meaning.",
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
   keywords: [
     "Islamic art",
     "Quranic art",

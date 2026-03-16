@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUiStore } from "@/store/uiStore";
 import { useCartStore } from "@/store/cartStore";
@@ -29,13 +30,8 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <span className="font-[family-name:var(--font-display)] text-2xl font-semibold text-text-primary tracking-wide">
-            YACUM
-          </span>
-          <span className="text-gold text-sm font-[family-name:var(--font-mono)]">
-            .ART
-          </span>
+        <Link href="/">
+          <Image src="/logo.png" alt="Yacum Art" width={120} height={40} priority />
         </Link>
 
         {/* Desktop Nav */}
