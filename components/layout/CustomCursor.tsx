@@ -42,7 +42,7 @@ export default function CustomCursor() {
           width: 4,
           height: 4,
           borderRadius: "50%",
-          backgroundColor: "#C8A96E",
+          backgroundColor: "#ffffff",
           transform: "translate(-50%, -50%)",
         }}
       />
@@ -58,8 +58,8 @@ export default function CustomCursor() {
           width: isView ? 80 : isHover ? 48 : 32,
           height: isView ? 80 : isHover ? 48 : 32,
           borderColor: isView
-            ? "rgba(200,169,110,0.6)"
-            : "rgba(200,169,110,0.3)",
+            ? "rgba(255,255,255,0.7)"
+            : "rgba(255,255,255,0.4)",
         }}
         transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
