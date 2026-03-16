@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { verses } from "@/data/verses";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import CustomCursor from "@/components/layout/CustomCursor";
+import ProtectedImage from "@/components/artwork/ProtectedImage";
 import ScrollProgress from "@/components/layout/ScrollProgress";
 import QRCodeBadge from "@/components/artwork/QRCodeBadge";
 import MeaningAccordion from "@/components/artwork/MeaningAccordion";
@@ -71,8 +71,8 @@ export default function ArtworkDetailPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            <div className="aspect-[3/4] relative overflow-hidden bg-bg-secondary">
-              <Image
+            <div className="aspect-[3/4] relative bg-bg-secondary">
+              <ProtectedImage
                 src={`https://placehold.co/900x1200/111111/C8A96E?text=${encodeURIComponent(verse.surah + " " + verse.surahNumber + ":" + verse.ayah)}`}
                 alt={`${verse.surah} ${verse.surahNumber}:${verse.ayah}`}
                 fill
