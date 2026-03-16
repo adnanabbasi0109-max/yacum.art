@@ -1,0 +1,69 @@
+import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+import connectToDatabase from "@/lib/db";
+import User from "@/models/User";
+import { signToken, COOKIE_NAME } from "@/lib/auth";
+
+export async function POST(request: NextRequest) {
+  try {
+    const { email, password, name } = await request.json();
+
+    if (!email || !password || !name) {
+      return NextResponse.json(
+        { error: "Name, email, and password are required" },
+        { status: 400 }
+      );
+    }
+
+    if (password.length < 6) {
+      return NextResponse.json(
+        { error: "Password must be at least 6 characters" },
+        { status: 400 }
+      );
+    }
+
+    await connectToDatabase();
+
+    const existing = await User.findOne({ email: email.toLowerCase() });
+    if (existing) {
+      return NextResponse.json(
+        { error: "An account with this email already exists" },
+        { status: 409 }
+      );
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    const user = await User.create({
+      email: email.toLowerCase(),
+      password: hashedPassword,
+      name,
+    });
+
+    const token = signToken({
+      id: user._id.toString(),
+      email: user.email,
+      name: user.name,
+    });
+
+    const response = NextResponse.json({
+      user: { id: user._id, email: user.email, name: user.name },
+    });
+
+    response.cookies.set(COOKIE_NAME, token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 30 * 24 * 60 * 60,
+      path: "/",
+    });
+
+    return response;
+  } catch (error) {
+    console.error("Signup error:", error);
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 }
+    );
+  }
+}
