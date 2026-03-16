@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useSession, signIn } from "next-auth/react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import CustomCursor from "@/components/layout/CustomCursor";
@@ -39,10 +38,10 @@ interface AuctionData {
 export default function SingleAuction() {
   const params = useParams();
   const router = useRouter();
-  const { data: session, status: authStatus } = useSession();
   const [auction, setAuction] = useState<AuctionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [bidAmount, setBidAmount] = useState(0);
+  const [bidderName, setBidderName] = useState("");
   const [bidding, setBidding] = useState(false);
   const [bidError, setBidError] = useState("");
   const [bidSuccess, setBidSuccess] = useState("");
@@ -83,8 +82,8 @@ export default function SingleAuction() {
     setBidError("");
     setBidSuccess("");
 
-    if (authStatus !== "authenticated") {
-      signIn(undefined, { callbackUrl: `/auction/${params.id}` });
+    if (!bidderName.trim()) {
+      setBidError("Please enter your name");
       return;
     }
 
@@ -98,16 +97,12 @@ export default function SingleAuction() {
       const res = await fetch(`/api/auction/${params.id}/bid`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: bidAmount }),
+        body: JSON.stringify({ amount: bidAmount, userName: bidderName.trim() }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        if (res.status === 401) {
-          signIn(undefined, { callbackUrl: `/auction/${params.id}` });
-          return;
-        }
         setBidError(data.error || "Failed to place bid");
         return;
       }
@@ -149,7 +144,7 @@ export default function SingleAuction() {
             onClick={() => router.push("/auction")}
             className="text-gold text-sm hover:underline"
           >
-            ← Back to Auctions
+            &larr; Back to Auctions
           </button>
         </main>
         <Footer />
@@ -272,93 +267,81 @@ export default function SingleAuction() {
 
               {/* Bid Form - only show for live auctions */}
               {auction.status === "live" && (
-                <div>
-                  {authStatus !== "authenticated" ? (
-                    <div className="border border-border-subtle p-6 text-center space-y-4">
-                      <p className="text-text-secondary text-sm">
-                        You must be logged in to place a bid
-                      </p>
-                      <button
-                        onClick={() =>
-                          signIn(undefined, {
-                            callbackUrl: `/auction/${params.id}`,
-                          })
-                        }
-                        className="px-8 py-3 bg-gold text-bg-primary text-sm tracking-wider uppercase hover:bg-gold-light transition-colors"
+                <form onSubmit={handleBid} className="space-y-4">
+                  <div>
+                    <label className="text-text-secondary text-xs uppercase tracking-wider block mb-2">
+                      Your Name
+                    </label>
+                    <input
+                      type="text"
+                      value={bidderName}
+                      onChange={(e) => setBidderName(e.target.value)}
+                      placeholder="Enter your name"
+                      required
+                      className="w-full bg-bg-secondary border border-border-subtle text-text-primary px-4 py-3 text-sm placeholder:text-text-secondary/40 focus:border-gold focus:outline-none transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-text-secondary text-xs uppercase tracking-wider block mb-2">
+                      Your Bid (minimum &#8377;
+                      {minimumBid.toLocaleString("en-IN")})
+                    </label>
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary">
+                          &#8377;
+                        </span>
+                        <input
+                          type="number"
+                          value={bidAmount}
+                          onChange={(e) =>
+                            setBidAmount(Number(e.target.value))
+                          }
+                          min={minimumBid}
+                          step={auction.bidIncrement}
+                          className="w-full bg-bg-secondary border border-border-subtle text-text-primary pl-8 pr-4 py-3 font-[family-name:var(--font-mono)] focus:border-gold focus:outline-none transition-colors"
+                        />
+                      </div>
+                      <motion.button
+                        type="submit"
+                        disabled={bidding || bidAmount < minimumBid}
+                        whileTap={{ scale: 0.98 }}
+                        className="px-8 py-3 bg-auction-red text-text-primary text-sm tracking-wider uppercase disabled:opacity-50 disabled:cursor-not-allowed hover:bg-auction-red/80 transition-colors"
                       >
-                        Sign In to Bid
-                      </button>
+                        {bidding ? "Placing..." : "Place Bid"}
+                      </motion.button>
                     </div>
-                  ) : (
-                    <form onSubmit={handleBid} className="space-y-4">
-                      <div>
-                        <label className="text-text-secondary text-xs uppercase tracking-wider block mb-2">
-                          Your Bid (minimum &#8377;
-                          {minimumBid.toLocaleString("en-IN")})
-                        </label>
-                        <div className="flex gap-2">
-                          <div className="relative flex-1">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary">
-                              &#8377;
-                            </span>
-                            <input
-                              type="number"
-                              value={bidAmount}
-                              onChange={(e) =>
-                                setBidAmount(Number(e.target.value))
-                              }
-                              min={minimumBid}
-                              step={auction.bidIncrement}
-                              className="w-full bg-bg-secondary border border-border-subtle text-text-primary pl-8 pr-4 py-3 font-[family-name:var(--font-mono)] focus:border-gold focus:outline-none transition-colors"
-                            />
-                          </div>
-                          <motion.button
-                            type="submit"
-                            disabled={bidding || bidAmount < minimumBid}
-                            whileTap={{ scale: 0.98 }}
-                            className="px-8 py-3 bg-auction-red text-text-primary text-sm tracking-wider uppercase disabled:opacity-50 disabled:cursor-not-allowed hover:bg-auction-red/80 transition-colors"
-                          >
-                            {bidding ? "Placing..." : "Place Bid"}
-                          </motion.button>
-                        </div>
-                      </div>
+                  </div>
 
-                      {/* Quick bid buttons */}
-                      <div className="flex gap-2">
-                        {[0, 1, 2, 3].map((multiplier) => {
-                          const quickBid =
-                            minimumBid + auction.bidIncrement * multiplier;
-                          return (
-                            <button
-                              key={multiplier}
-                              type="button"
-                              onClick={() => setBidAmount(quickBid)}
-                              className={`flex-1 py-2 text-xs font-[family-name:var(--font-mono)] border transition-colors ${
-                                bidAmount === quickBid
-                                  ? "border-gold text-gold"
-                                  : "border-border-subtle text-text-secondary hover:border-gold/30"
-                              }`}
-                            >
-                              &#8377;{quickBid.toLocaleString("en-IN")}
-                            </button>
-                          );
-                        })}
-                      </div>
+                  {/* Quick bid buttons */}
+                  <div className="flex gap-2">
+                    {[0, 1, 2, 3].map((multiplier) => {
+                      const quickBid =
+                        minimumBid + auction.bidIncrement * multiplier;
+                      return (
+                        <button
+                          key={multiplier}
+                          type="button"
+                          onClick={() => setBidAmount(quickBid)}
+                          className={`flex-1 py-2 text-xs font-[family-name:var(--font-mono)] border transition-colors ${
+                            bidAmount === quickBid
+                              ? "border-gold text-gold"
+                              : "border-border-subtle text-text-secondary hover:border-gold/30"
+                          }`}
+                        >
+                          &#8377;{quickBid.toLocaleString("en-IN")}
+                        </button>
+                      );
+                    })}
+                  </div>
 
-                      {bidError && (
-                        <p className="text-auction-red text-sm">{bidError}</p>
-                      )}
-                      {bidSuccess && (
-                        <p className="text-teal text-sm">{bidSuccess}</p>
-                      )}
-
-                      <p className="text-text-secondary/40 text-xs">
-                        Signed in as{" "}
-                        {session?.user?.name || session?.user?.email}
-                      </p>
-                    </form>
+                  {bidError && (
+                    <p className="text-auction-red text-sm">{bidError}</p>
                   )}
-                </div>
+                  {bidSuccess && (
+                    <p className="text-teal text-sm">{bidSuccess}</p>
+                  )}
+                </form>
               )}
 
               {auction.status === "ended" && (
@@ -424,7 +407,7 @@ export default function SingleAuction() {
                 <p className="text-text-secondary text-sm leading-relaxed">
                   The winning bidder receives a digitally signed Certificate of
                   Authenticity confirming this as serial {auction.serialNumber}{" "}
-                  — the one and only reproduction of this artwork.
+                  &mdash; the one and only reproduction of this artwork.
                 </p>
               </div>
 

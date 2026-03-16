@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
 import connectToDatabase from '@/lib/db';
 import Auction from '@/models/Auction';
 
@@ -8,24 +7,22 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Require authentication
-    const session = await getServerSession();
-    if (!session?.user?.email) {
-      return NextResponse.json(
-        { error: 'You must be logged in to place a bid' },
-        { status: 401 }
-      );
-    }
-
     await connectToDatabase();
 
     const { id } = await params;
     const body = await request.json();
-    const { amount } = body as { amount: number };
+    const { amount, userName } = body as { amount: number; userName: string };
 
     if (!amount) {
       return NextResponse.json(
         { error: 'Bid amount is required' },
+        { status: 400 }
+      );
+    }
+
+    if (!userName || !userName.trim()) {
+      return NextResponse.json(
+        { error: 'Name is required to place a bid' },
         { status: 400 }
       );
     }
@@ -64,17 +61,14 @@ export async function POST(
       );
     }
 
-    // Add to bid history
-    const userName = session.user.name || session.user.email.split('@')[0];
     auction.bidHistory.push({
-      userId: (session.user as { id?: string }).id || session.user.email,
-      userName,
+      userId: 'guest',
+      userName: userName.trim(),
       amount,
       time: new Date(),
     });
 
     auction.currentBid = amount;
-    auction.currentBidderId = ((session.user as { id?: string }).id || session.user.email) as unknown as typeof auction.currentBidderId;
     await auction.save();
 
     const updated = await Auction.findById(id).populate('artworkId').lean();

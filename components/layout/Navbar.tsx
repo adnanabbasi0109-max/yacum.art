@@ -48,13 +48,6 @@ export default function Navbar() {
           >
             Auctions
           </Link>
-          <Link
-            href="/account"
-            className="text-text-secondary hover:text-text-primary transition-colors duration-300 text-sm tracking-wider uppercase"
-          >
-            Account
-          </Link>
-
           {/* Cart */}
           <button
             onClick={toggleCart}
@@ -130,13 +123,6 @@ export default function Navbar() {
                 className="text-text-secondary hover:text-text-primary text-lg"
               >
                 Auctions
-              </Link>
-              <Link
-                href="/account"
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-text-secondary hover:text-text-primary text-lg"
-              >
-                Account
               </Link>
               <button
                 onClick={() => {
