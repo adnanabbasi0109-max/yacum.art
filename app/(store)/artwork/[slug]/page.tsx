@@ -73,7 +73,7 @@ export default function ArtworkDetailPage() {
           >
             <div className="aspect-[3/4] relative overflow-hidden bg-bg-secondary">
               <Image
-                src="https://placehold.co/900x1200/111111/C8A96E?text=ARTWORK"
+                src={`https://placehold.co/900x1200/111111/C8A96E?text=${encodeURIComponent(verse.surah + " " + verse.surahNumber + ":" + verse.ayah)}`}
                 alt={`${verse.surah} ${verse.surahNumber}:${verse.ayah}`}
                 fill
                 className="object-cover"

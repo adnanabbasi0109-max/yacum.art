@@ -1,5 +1,12 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
 
+export interface IBidEntry {
+  userId: string;
+  userName: string;
+  amount: number;
+  time: Date;
+}
+
 export interface IAuctionWinner {
   userId: Types.ObjectId;
   finalBid: number;
@@ -12,6 +19,7 @@ export interface IAuction extends Document {
   currentBid: number;
   currentBidderId?: Types.ObjectId;
   bidIncrement: number;
+  bidHistory: IBidEntry[];
   endTime: Date;
   status: 'upcoming' | 'live' | 'ended' | 'sold' | 'unsold';
   winner?: IAuctionWinner;
@@ -20,6 +28,16 @@ export interface IAuction extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
+const BidEntrySchema = new Schema<IBidEntry>(
+  {
+    userId: { type: String, required: true },
+    userName: { type: String, default: 'Anonymous' },
+    amount: { type: Number, required: true },
+    time: { type: Date, default: Date.now },
+  },
+  { _id: false }
+);
 
 const AuctionSchema = new Schema<IAuction>(
   {
@@ -32,6 +50,7 @@ const AuctionSchema = new Schema<IAuction>(
     currentBid: { type: Number, default: 0 },
     currentBidderId: { type: Schema.Types.ObjectId, ref: 'User' },
     bidIncrement: { type: Number, required: true, default: 500 },
+    bidHistory: [BidEntrySchema],
     endTime: { type: Date, required: true },
     status: {
       type: String,

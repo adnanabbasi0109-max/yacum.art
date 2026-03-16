@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
 import connectToDatabase from '@/lib/db';
 import Auction from '@/models/Auction';
 
@@ -7,15 +8,24 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Require authentication
+    const session = await getServerSession();
+    if (!session?.user?.email) {
+      return NextResponse.json(
+        { error: 'You must be logged in to place a bid' },
+        { status: 401 }
+      );
+    }
+
     await connectToDatabase();
 
     const { id } = await params;
     const body = await request.json();
-    const { amount, userId } = body as { amount: number; userId: string };
+    const { amount } = body as { amount: number };
 
-    if (!amount || !userId) {
+    if (!amount) {
       return NextResponse.json(
-        { error: 'amount and userId are required' },
+        { error: 'Bid amount is required' },
         { status: 400 }
       );
     }
@@ -29,7 +39,6 @@ export async function POST(
       );
     }
 
-    // Check auction is live
     if (auction.status !== 'live') {
       return NextResponse.json(
         { error: 'Auction is not currently live' },
@@ -37,7 +46,6 @@ export async function POST(
       );
     }
 
-    // Check auction has not ended
     if (new Date() > new Date(auction.endTime)) {
       return NextResponse.json(
         { error: 'Auction has ended' },
@@ -45,21 +53,28 @@ export async function POST(
       );
     }
 
-    // Validate bid amount
     const minimumBid = auction.currentBid > 0
       ? auction.currentBid + auction.bidIncrement
       : auction.startingBid;
 
     if (amount < minimumBid) {
       return NextResponse.json(
-        { error: `Bid must be at least ${minimumBid}` },
+        { error: `Bid must be at least ₹${minimumBid.toLocaleString('en-IN')}` },
         { status: 400 }
       );
     }
 
-    // Update auction with the new bid
+    // Add to bid history
+    const userName = session.user.name || session.user.email.split('@')[0];
+    auction.bidHistory.push({
+      userId: (session.user as { id?: string }).id || session.user.email,
+      userName,
+      amount,
+      time: new Date(),
+    });
+
     auction.currentBid = amount;
-    auction.currentBidderId = userId as unknown as typeof auction.currentBidderId;
+    auction.currentBidderId = ((session.user as { id?: string }).id || session.user.email) as unknown as typeof auction.currentBidderId;
     await auction.save();
 
     const updated = await Auction.findById(id).populate('artworkId').lean();
