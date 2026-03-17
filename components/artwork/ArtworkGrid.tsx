@@ -2,14 +2,14 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import type { Verse } from "@/data/verses";
+import type { Artwork } from "@/types/artwork";
 import ArtworkCard from "@/components/artwork/ArtworkCard";
 
 interface ArtworkGridProps {
-  verses: Verse[];
+  artworks: Artwork[];
 }
 
-function AnimatedItem({ verse, index }: { verse: Verse; index: number }) {
+function AnimatedItem({ artwork, index }: { artwork: Artwork; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
 
@@ -25,17 +25,23 @@ function AnimatedItem({ verse, index }: { verse: Verse; index: number }) {
       }}
       className="break-inside-avoid mb-6"
     >
-      <ArtworkCard verse={verse} />
+      <ArtworkCard artwork={artwork} />
     </motion.div>
   );
 }
 
-export default function ArtworkGrid({ verses }: ArtworkGridProps) {
+export default function ArtworkGrid({ artworks }: ArtworkGridProps) {
   return (
     <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
-      {verses.map((verse, index) => (
-        <AnimatedItem key={verse.id} verse={verse} index={index} />
-      ))}
+      {artworks.length === 0 ? (
+        <p className="text-text-secondary text-center col-span-full py-20">
+          No artworks available yet.
+        </p>
+      ) : (
+        artworks.map((artwork, index) => (
+          <AnimatedItem key={artwork._id} artwork={artwork} index={index} />
+        ))
+      )}
     </div>
   );
 }

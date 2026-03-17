@@ -26,6 +26,7 @@ export interface IArtwork extends Document {
   printSizes: IPrintSize[];
   frameOptions: IFrameOption[];
   status: 'draft' | 'published' | 'soldout';
+  description?: string;
   isAuctionPiece: boolean;
   isFeatured: boolean;
   createdAt: Date;
@@ -69,6 +70,7 @@ const ArtworkSchema = new Schema<IArtwork>(
       enum: ['draft', 'published', 'soldout'],
       default: 'published',
     },
+    description: { type: String },
     isAuctionPiece: { type: Boolean, default: false },
     isFeatured: { type: Boolean, default: false },
   },

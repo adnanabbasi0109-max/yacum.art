@@ -1,16 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { verses } from "@/data/verses";
+import type { Artwork } from "@/types/artwork";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import CustomCursor from "@/components/layout/CustomCursor";
 import ProtectedImage from "@/components/artwork/ProtectedImage";
 import ScrollProgress from "@/components/layout/ScrollProgress";
 import QRCodeBadge from "@/components/artwork/QRCodeBadge";
-import MeaningAccordion from "@/components/artwork/MeaningAccordion";
 import FrameSelector from "@/components/artwork/FrameSelector";
 
 const themeColors: Record<string, string> = {
@@ -34,13 +33,38 @@ const printSizes = [
 export default function ArtworkDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
-  const verse = verses.find((v) => v.id === slug);
 
+  const [artwork, setArtwork] = useState<Artwork | null>(null);
+  const [loading, setLoading] = useState(true);
   const [purchaseTab, setPurchaseTab] = useState<"digital" | "print">("digital");
   const [selectedSize, setSelectedSize] = useState("A3");
   const [selectedFrame, setSelectedFrame] = useState("thin-black");
 
-  if (!verse) {
+  useEffect(() => {
+    fetch(`/api/artworks/${slug}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Not found");
+        return res.json();
+      })
+      .then(setArtwork)
+      .catch(() => setArtwork(null))
+      .finally(() => setLoading(false));
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <>
+        <CustomCursor />
+        <Navbar />
+        <main className="min-h-screen flex items-center justify-center pt-20">
+          <div className="w-8 h-8 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
+  if (!artwork) {
     return (
       <>
         <CustomCursor />
@@ -54,7 +78,7 @@ export default function ArtworkDetailPage() {
   }
 
   const currentSizeOption = printSizes.find((s) => s.label === selectedSize) || printSizes[0];
-  const printPrice = Math.round(verse.printPriceBase * currentSizeOption.priceMultiplier);
+  const printPrice = Math.round(artwork.printPriceBase * currentSizeOption.priceMultiplier);
 
   return (
     <>
@@ -73,14 +97,14 @@ export default function ArtworkDetailPage() {
           >
             <div className="aspect-[3/4] relative bg-bg-secondary">
               <ProtectedImage
-                src={`https://placehold.co/900x1200/111111/C8A96E?text=${encodeURIComponent(verse.surah + " " + verse.surahNumber + ":" + verse.ayah)}`}
-                alt={`${verse.surah} ${verse.surahNumber}:${verse.ayah}`}
+                src={artwork.previewImageUrl}
+                alt={artwork.translation}
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 60vw"
                 priority
               />
-              <QRCodeBadge verseId={verse.id} variant="overlay" />
+              <QRCodeBadge verseId={artwork.verseId} variant="overlay" />
             </div>
 
             {/* Print size thumbnails */}
@@ -111,10 +135,10 @@ export default function ArtworkDetailPage() {
             {/* Theme badge */}
             <span
               className={`inline-block text-[10px] px-3 py-1 tracking-widest uppercase mb-6 ${
-                themeColors[verse.theme] || "bg-gold/20 text-gold"
+                themeColors[artwork.theme] || "bg-gold/20 text-gold"
               }`}
             >
-              {verse.theme}
+              {artwork.theme}
             </span>
 
             {/* Arabic verse */}
@@ -123,37 +147,36 @@ export default function ArtworkDetailPage() {
               dir="rtl"
               lang="ar"
             >
-              {verse.arabic}
+              {artwork.arabic}
             </h1>
-
-            {/* Transliteration */}
-            <p className="text-text-secondary italic text-sm leading-relaxed mb-4">
-              {verse.transliteration}
-            </p>
 
             {/* English translation */}
             <p className="font-[family-name:var(--font-display)] text-xl text-text-primary leading-relaxed mb-3">
-              {verse.translation}
+              {artwork.translation}
             </p>
 
-            {/* Surah + Ayah reference */}
+            {/* Verse reference */}
             <p className="text-text-secondary text-xs font-[family-name:var(--font-mono)] tracking-wider mb-6">
-              Surah {verse.surah} ({verse.surahNumber}:{verse.ayah})
+              {artwork.verseId.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
             </p>
 
             {/* Gold divider */}
             <div className="h-px bg-gold/20 mb-6" />
 
-            {/* Meaning Accordion */}
-            <div className="mb-6">
-              <h3 className="text-text-secondary text-xs tracking-widest uppercase mb-3">
-                Layers of Meaning
-              </h3>
-              <MeaningAccordion layers={verse.meaningLayers} />
-            </div>
-
-            {/* Gold divider */}
-            <div className="h-px bg-gold/20 mb-6" />
+            {/* Description */}
+            {artwork.description && (
+              <>
+                <div className="mb-6">
+                  <h3 className="text-text-secondary text-xs tracking-widest uppercase mb-3">
+                    About This Piece
+                  </h3>
+                  <p className="text-text-secondary text-sm leading-relaxed">
+                    {artwork.description}
+                  </p>
+                </div>
+                <div className="h-px bg-gold/20 mb-6" />
+              </>
+            )}
 
             {/* Purchase section */}
             <div className="mb-6">
@@ -191,7 +214,7 @@ export default function ArtworkDetailPage() {
                 >
                   <div className="flex items-baseline justify-between">
                     <span className="text-gold text-2xl font-[family-name:var(--font-mono)]">
-                      &#8377;{verse.digitalPrice.toLocaleString("en-IN")}
+                      &#8377;{artwork.digitalPrice.toLocaleString("en-IN")}
                     </span>
                   </div>
                   <div className="space-y-2 text-text-secondary text-sm">
@@ -240,7 +263,7 @@ export default function ArtworkDetailPage() {
                             {size.dimensions}
                           </span>
                           <span className="block text-[10px] text-gold font-[family-name:var(--font-mono)] mt-1">
-                            &#8377;{Math.round(verse.printPriceBase * size.priceMultiplier).toLocaleString("en-IN")}
+                            &#8377;{Math.round(artwork.printPriceBase * size.priceMultiplier).toLocaleString("en-IN")}
                           </span>
                         </button>
                       ))}

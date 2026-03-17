@@ -4,10 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useUiStore } from "@/store/uiStore";
-import type { Verse } from "@/data/verses";
+import type { Artwork } from "@/types/artwork";
 
 interface ArtworkCardProps {
-  verse: Verse;
+  artwork: Artwork;
 }
 
 const themeColors: Record<string, string> = {
@@ -22,13 +22,12 @@ const themeColors: Record<string, string> = {
   Knowledge: "bg-gold/20 text-gold",
 };
 
-export default function ArtworkCard({ verse }: ArtworkCardProps) {
+export default function ArtworkCard({ artwork }: ArtworkCardProps) {
   const setCursorVariant = useUiStore((s) => s.setCursorVariant);
-  const slug = verse.id;
 
   return (
     <Link
-      href={`/artwork/${slug}`}
+      href={`/artwork/${artwork.slug}`}
       className="group block"
       onMouseEnter={() => setCursorVariant("view")}
       onMouseLeave={() => setCursorVariant("default")}
@@ -40,8 +39,8 @@ export default function ArtworkCard({ verse }: ArtworkCardProps) {
         {/* Image container - 3:4 ratio */}
         <div className="aspect-[3/4] relative overflow-hidden bg-bg-secondary mb-4">
           <Image
-            src={`https://placehold.co/600x800/111111/C8A96E?text=${encodeURIComponent(verse.theme)}`}
-            alt={`${verse.surah} ${verse.surahNumber}:${verse.ayah}`}
+            src={artwork.previewImageUrl}
+            alt={artwork.translation}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-700"
             sizes="(max-width: 768px) 100vw, 320px"
@@ -51,10 +50,10 @@ export default function ArtworkCard({ verse }: ArtworkCardProps) {
           <div className="absolute top-3 left-3">
             <span
               className={`text-[10px] px-2 py-1 tracking-wider uppercase ${
-                themeColors[verse.theme] || "bg-gold/20 text-gold"
+                themeColors[artwork.theme] || "bg-gold/20 text-gold"
               }`}
             >
-              {verse.theme}
+              {artwork.theme}
             </span>
           </div>
 
@@ -82,23 +81,23 @@ export default function ArtworkCard({ verse }: ArtworkCardProps) {
 
         {/* Info */}
         <h3 className="font-[family-name:var(--font-display)] text-lg text-text-primary group-hover:text-gold transition-colors duration-300">
-          {verse.surah} {verse.surahNumber}:{verse.ayah}
+          {artwork.verseId.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
         </h3>
         <p
           className="font-[family-name:var(--font-arabic)] text-sm text-text-secondary mt-1 line-clamp-1"
           dir="rtl"
           lang="ar"
         >
-          {verse.arabic.slice(0, 50)}...
+          {artwork.arabic.slice(0, 50)}...
         </p>
         <div className="mt-2 flex items-center gap-2">
-          {verse.isAuctionPiece ? (
+          {artwork.isAuctionPiece ? (
             <span className="text-auction-red text-xs font-[family-name:var(--font-mono)] tracking-wider">
               AUCTION ONLY
             </span>
           ) : (
             <span className="text-gold text-sm font-[family-name:var(--font-mono)]">
-              &#8377;{verse.digitalPrice.toLocaleString("en-IN")}
+              &#8377;{artwork.digitalPrice.toLocaleString("en-IN")}
             </span>
           )}
         </div>
