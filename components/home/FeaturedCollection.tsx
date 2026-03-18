@@ -1,14 +1,12 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Artwork } from "@/types/artwork";
 import ArtworkCard from "@/components/artwork/ArtworkCard";
 
 export default function FeaturedCollection() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
   const [featured, setFeatured] = useState<Artwork[]>([]);
 
   useEffect(() => {
@@ -25,11 +23,12 @@ export default function FeaturedCollection() {
   if (featured.length === 0) return null;
 
   return (
-    <section ref={ref} className="py-24 bg-bg-primary">
+    <section className="py-24 bg-bg-primary">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="flex items-end justify-between mb-12"
         >
@@ -55,7 +54,8 @@ export default function FeaturedCollection() {
             <motion.div
               key={artwork._id}
               initial={{ opacity: 0, y: 24 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{
                 duration: 0.6,
                 delay: i * 0.1,
