@@ -105,14 +105,14 @@ export default function ProtectedImage({
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden"
-      style={{ userSelect: "none", WebkitUserSelect: "none" }}
+      className="relative overflow-hidden w-full h-full"
+      style={{ userSelect: "none", WebkitUserSelect: "none", position: fill ? "absolute" : "relative", inset: fill ? 0 : undefined }}
       onContextMenu={handleContextMenu}
       onDragStart={handleDragStart}
     >
       {/* The actual image */}
       <div
-        className="transition-all duration-300"
+        className="absolute inset-0 transition-all duration-300"
         style={{
           filter: blurred ? "blur(30px) brightness(0.3)" : "none",
           transform: blurred ? "scale(1.1)" : "scale(1)",
@@ -121,9 +121,9 @@ export default function ProtectedImage({
         <Image
           src={src}
           alt={alt}
-          fill={fill}
-          width={width}
-          height={height}
+          fill
+          width={undefined}
+          height={undefined}
           className={className}
           sizes={sizes}
           priority={priority}
