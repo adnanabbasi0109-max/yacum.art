@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     const stripe = getStripe();
     const lineItems = items.map((item: { title: string; type: string; printSize?: string; price: number; quantity: number }) => ({
       price_data: {
-        currency: 'usd',
+        currency: 'inr',
         product_data: {
           name: `${item.title} (${item.type === 'digital' ? 'Digital Download' : `Print — ${item.printSize}`})`,
         },

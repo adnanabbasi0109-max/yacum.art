@@ -233,7 +233,7 @@ export default function ArtworkDetailPage() {
                 >
                   <div className="flex items-baseline justify-between">
                     <span className="text-gold text-2xl font-[family-name:var(--font-mono)]">
-                      ${(artwork.digitalPrice / 100).toFixed(2)}
+                      ₹{(artwork.digitalPrice / 100).toFixed(0)}
                     </span>
                   </div>
                   <div className="space-y-2 text-text-secondary text-sm">
@@ -282,7 +282,7 @@ export default function ArtworkDetailPage() {
                             {size.dimensions}
                           </span>
                           <span className="block text-[10px] text-gold font-[family-name:var(--font-mono)] mt-1">
-                            ${(artwork.printPriceBase * size.priceMultiplier / 100).toFixed(2)}
+                            ₹{(artwork.printPriceBase * size.priceMultiplier / 100).toFixed(0)}
                           </span>
                         </button>
                       ))}

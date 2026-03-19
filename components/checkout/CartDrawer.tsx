@@ -133,7 +133,7 @@ export default function CartDrawer() {
                           </button>
                         </div>
                         <span className="text-gold text-sm font-[family-name:var(--font-mono)]">
-                          ${(item.price * item.quantity / 100).toFixed(2)}
+                          ₹{(item.price * item.quantity / 100).toFixed(0)}
                         </span>
                       </div>
                     </div>
@@ -167,7 +167,7 @@ export default function CartDrawer() {
                 <div className="flex items-center justify-between">
                   <span className="text-text-secondary text-sm">Subtotal</span>
                   <span className="text-gold text-lg font-[family-name:var(--font-mono)]">
-                    ${(total / 100).toFixed(2)}
+                    ₹{(total / 100).toFixed(0)}
                   </span>
                 </div>
                 <Link

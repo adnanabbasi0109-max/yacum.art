@@ -212,7 +212,7 @@ export default function CheckoutPage() {
                 >
                   {processing
                     ? "Redirecting to payment..."
-                    : `Pay $${(total / 100).toFixed(2)}`}
+                    : `Pay ₹${(total / 100).toFixed(0)}`}
                 </motion.button>
 
                 <p className="text-text-secondary text-xs text-center">
@@ -259,7 +259,7 @@ export default function CheckoutPage() {
                           </p>
                         </div>
                         <span className="text-gold text-sm font-[family-name:var(--font-mono)]">
-                          ${((item.price * item.quantity) / 100).toFixed(2)}
+                          ₹{((item.price * item.quantity) / 100).toFixed(0)}
                         </span>
                       </div>
                     ))}
@@ -270,7 +270,7 @@ export default function CheckoutPage() {
                   <div className="flex justify-between">
                     <span className="text-text-secondary text-sm">Total</span>
                     <span className="text-gold text-lg font-[family-name:var(--font-mono)]">
-                      ${(total / 100).toFixed(2)}
+                      ₹{(total / 100).toFixed(0)}
                     </span>
                   </div>
                 </div>

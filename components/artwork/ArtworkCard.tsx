@@ -86,7 +86,7 @@ export default function ArtworkCard({ artwork }: ArtworkCardProps) {
             </span>
           ) : (
             <span className="text-gold text-sm font-[family-name:var(--font-mono)]">
-              ${(artwork.digitalPrice / 100).toFixed(2)}
+              ₹{(artwork.digitalPrice / 100).toFixed(0)}
             </span>
           )}
         </div>
