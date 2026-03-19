@@ -52,7 +52,7 @@ export default function Navbar() {
             href="/track-order"
             className="text-text-secondary hover:text-text-primary transition-colors duration-300 text-sm tracking-wider uppercase"
           >
-            Track Order
+            My Orders
           </Link>
           <Link
             href="/account"
@@ -141,7 +141,7 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="text-text-secondary hover:text-text-primary text-lg"
               >
-                Track Order
+                My Orders
               </Link>
               <Link
                 href="/account"
