@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import CartDrawer from "@/components/checkout/CartDrawer";
 
 export const metadata: Metadata = {
   title: "YACUM.ART — Quranic Verse Art",
@@ -40,6 +41,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         {children}
+        <CartDrawer />
       </body>
     </html>
   );

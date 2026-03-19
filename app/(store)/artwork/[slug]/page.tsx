@@ -10,6 +10,7 @@ import CustomCursor from "@/components/layout/CustomCursor";
 import ProtectedImage from "@/components/artwork/ProtectedImage";
 import ScrollProgress from "@/components/layout/ScrollProgress";
 import QRCodeBadge from "@/components/artwork/QRCodeBadge";
+import { useCartStore } from "@/store/cartStore";
 import FrameSelector from "@/components/artwork/FrameSelector";
 
 function formatVerseRef(verseId: string): string {
@@ -59,6 +60,8 @@ export default function ArtworkDetailPage() {
   const [purchaseTab, setPurchaseTab] = useState<"digital" | "print">("digital");
   const [selectedSize, setSelectedSize] = useState("A3");
   const [selectedFrame, setSelectedFrame] = useState("thin-black");
+  const [addedToCart, setAddedToCart] = useState(false);
+  const addItem = useCartStore((s) => s.addItem);
 
   useEffect(() => {
     fetch(`/api/artworks/${slug}`)
@@ -309,9 +312,32 @@ export default function ArtworkDetailPage() {
             <motion.button
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full bg-gold text-bg-primary py-4 text-sm tracking-widest uppercase font-medium hover:bg-gold-light transition-colors duration-200"
+              onClick={() => {
+                if (!artwork) return;
+                const price = purchaseTab === "digital"
+                  ? artwork.digitalPrice
+                  : printPrice;
+                addItem({
+                  artworkId: artwork._id,
+                  slug: artwork.slug,
+                  title: artwork.title || artwork.slug,
+                  arabic: artwork.arabic,
+                  previewImageUrl: artwork.previewImageUrl,
+                  type: purchaseTab,
+                  printSize: purchaseTab === "print" ? selectedSize : undefined,
+                  frameOption: purchaseTab === "print" ? selectedFrame : undefined,
+                  price,
+                });
+                setAddedToCart(true);
+                setTimeout(() => setAddedToCart(false), 2000);
+              }}
+              className={`w-full py-4 text-sm tracking-widest uppercase font-medium transition-colors duration-200 ${
+                addedToCart
+                  ? "bg-teal text-bg-primary"
+                  : "bg-gold text-bg-primary hover:bg-gold-light"
+              }`}
             >
-              Add to Cart
+              {addedToCart ? "✓ Added to Cart" : "Add to Cart"}
             </motion.button>
 
             {/* Provenance block */}
