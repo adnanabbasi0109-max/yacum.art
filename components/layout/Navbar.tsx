@@ -49,6 +49,12 @@ export default function Navbar() {
             Auctions
           </Link>
           <Link
+            href="/track-order"
+            className="text-text-secondary hover:text-text-primary transition-colors duration-300 text-sm tracking-wider uppercase"
+          >
+            Track Order
+          </Link>
+          <Link
             href="/account"
             className="text-text-secondary hover:text-text-primary transition-colors duration-300 text-sm tracking-wider uppercase"
           >
@@ -129,6 +135,13 @@ export default function Navbar() {
                 className="text-text-secondary hover:text-text-primary text-lg"
               >
                 Auctions
+              </Link>
+              <Link
+                href="/track-order"
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-text-secondary hover:text-text-primary text-lg"
+              >
+                Track Order
               </Link>
               <Link
                 href="/account"

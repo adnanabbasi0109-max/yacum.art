@@ -18,6 +18,12 @@ export interface IShippingAddress {
   zip: string;
 }
 
+export interface ITrackingUpdate {
+  status: string;
+  message: string;
+  timestamp: Date;
+}
+
 export interface IOrder extends Document {
   orderNumber: string;
   email: string;
@@ -30,6 +36,11 @@ export interface IOrder extends Document {
   razorpayPaymentId?: string;
   downloadToken?: string;
   shippingAddress?: IShippingAddress;
+  fulfillmentStatus: 'processing' | 'confirmed' | 'printing' | 'shipped' | 'delivered';
+  trackingNumber?: string;
+  trackingCarrier?: string;
+  trackingUpdates: ITrackingUpdate[];
+  adminNotes?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -44,6 +55,15 @@ const OrderItemSchema = new Schema(
     frameOption: { type: String },
     price: { type: Number, required: true },
     quantity: { type: Number, default: 1 },
+  },
+  { _id: false }
+);
+
+const TrackingUpdateSchema = new Schema(
+  {
+    status: { type: String, required: true },
+    message: { type: String, required: true },
+    timestamp: { type: Date, default: Date.now },
   },
   { _id: false }
 );
@@ -70,6 +90,15 @@ const OrderSchema = new Schema<IOrder>(
       country: String,
       zip: String,
     },
+    fulfillmentStatus: {
+      type: String,
+      enum: ['processing', 'confirmed', 'printing', 'shipped', 'delivered'],
+      default: 'processing',
+    },
+    trackingNumber: { type: String },
+    trackingCarrier: { type: String },
+    trackingUpdates: [TrackingUpdateSchema],
+    adminNotes: { type: String },
   },
   { timestamps: true }
 );

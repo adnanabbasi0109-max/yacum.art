@@ -9,6 +9,7 @@ const navItems = [
   { href: "/admin", label: "Dashboard", icon: "◆" },
   { href: "/admin/products", label: "Products", icon: "◇" },
   { href: "/admin/products/new", label: "Add Product", icon: "+" },
+  { href: "/admin/orders", label: "Orders", icon: "▤" },
 ];
 
 export default function AdminLayout({

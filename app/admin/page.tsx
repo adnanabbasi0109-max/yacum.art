@@ -8,6 +8,7 @@ interface Stats {
   published: number;
   draft: number;
   auction: number;
+  orders: number;
 }
 
 export default function AdminDashboard() {
@@ -16,25 +17,29 @@ export default function AdminDashboard() {
     published: 0,
     draft: 0,
     auction: 0,
+    orders: 0,
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/admin/products")
-      .then((r) => r.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
+    Promise.all([
+      fetch("/api/admin/products").then((r) => r.json()),
+      fetch("/api/admin/orders").then((r) => r.json()),
+    ])
+      .then(([products, orders]) => {
+        if (Array.isArray(products)) {
           setStats({
-            total: data.length,
-            published: data.filter(
+            total: products.length,
+            published: products.filter(
               (p: { status: string }) => p.status === "published"
             ).length,
-            draft: data.filter(
+            draft: products.filter(
               (p: { status: string }) => p.status === "draft"
             ).length,
-            auction: data.filter(
+            auction: products.filter(
               (p: { isAuctionPiece: boolean }) => p.isAuctionPiece
             ).length,
+            orders: Array.isArray(orders) ? orders.length : 0,
           });
         }
       })
@@ -62,6 +67,11 @@ export default function AdminDashboard() {
       label: "Auction Pieces",
       value: stats.auction,
       color: "#f87171",
+    },
+    {
+      label: "Orders",
+      value: stats.orders,
+      color: "#60a5fa",
     },
   ];
 
@@ -131,11 +141,11 @@ export default function AdminDashboard() {
             <span className="text-sm text-[#e8e0d0]/60">View All Products</span>
           </Link>
           <Link
-            href="/"
+            href="/admin/orders"
             className="border border-[#c9a96e]/20 p-5 hover:border-[#c9a96e]/50 hover:bg-[#c9a96e]/5 transition-all text-center"
           >
-            <span className="text-2xl block mb-2">◈</span>
-            <span className="text-sm text-[#e8e0d0]/60">View Storefront</span>
+            <span className="text-2xl block mb-2">▤</span>
+            <span className="text-sm text-[#e8e0d0]/60">Manage Orders</span>
           </Link>
         </div>
       </div>
