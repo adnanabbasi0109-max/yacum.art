@@ -88,7 +88,7 @@ export default function SingleAuction() {
     }
 
     if (bidAmount < minimumBid) {
-      setBidError(`Minimum bid is $${(minimumBid / 100).toFixed(2)}`);
+      setBidError(`Minimum bid is ₹${(minimumBid / 100).toFixed(0)}`);
       return;
     }
 
@@ -237,14 +237,14 @@ export default function SingleAuction() {
                   {auction.currentBid > 0 ? "Current Bid" : "Starting Bid"}
                 </p>
                 <p className="text-gold text-4xl font-[family-name:var(--font-mono)]">
-                  ${((auction.currentBid > 0
+                  ₹{((auction.currentBid > 0
                     ? auction.currentBid
                     : auction.startingBid
-                  ) / 100).toFixed(2)}
+                  ) / 100).toFixed(0)}
                 </p>
                 {auction.status === "live" && (
                   <p className="text-text-secondary text-xs mt-1">
-                    Minimum next bid: ${(minimumBid / 100).toFixed(2)}
+                    Minimum next bid: ₹{(minimumBid / 100).toFixed(0)}
                   </p>
                 )}
               </div>
@@ -281,12 +281,12 @@ export default function SingleAuction() {
                   </div>
                   <div>
                     <label className="text-text-secondary text-xs uppercase tracking-wider block mb-2">
-                      Your Bid (minimum ${(minimumBid / 100).toFixed(2)})
+                      Your Bid (minimum ₹{(minimumBid / 100).toFixed(0)})
                     </label>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary">
-                          $
+                          ₹
                         </span>
                         <input
                           type="number"
@@ -326,7 +326,7 @@ export default function SingleAuction() {
                               : "border-border-subtle text-text-secondary hover:border-gold/30"
                           }`}
                         >
-                          ${(quickBid / 100).toFixed(2)}
+                          ₹{(quickBid / 100).toFixed(0)}
                         </button>
                       );
                     })}
@@ -382,7 +382,7 @@ export default function SingleAuction() {
                         </div>
                         <div className="text-right">
                           <span className="text-gold text-sm font-[family-name:var(--font-mono)]">
-                            ${(bid.amount / 100).toFixed(2)}
+                            ₹{(bid.amount / 100).toFixed(0)}
                           </span>
                           <p className="text-text-secondary text-[10px]">
                             {new Date(bid.time).toLocaleString()}

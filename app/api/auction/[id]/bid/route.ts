@@ -56,7 +56,7 @@ export async function POST(
 
     if (amount < minimumBid) {
       return NextResponse.json(
-        { error: `Bid must be at least $${(minimumBid / 100).toFixed(2)}` },
+        { error: `Bid must be at least ₹${(minimumBid / 100).toFixed(0)}` },
         { status: 400 }
       );
     }

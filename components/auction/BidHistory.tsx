@@ -42,7 +42,7 @@ export default function BidHistory({ bids }: BidHistoryProps) {
               </div>
               <div className="text-right">
                 <span className="text-gold text-sm font-[family-name:var(--font-mono)]">
-                  ${(bid.amount / 100).toFixed(2)}
+                  ₹{(bid.amount / 100).toFixed(0)}
                 </span>
                 <p className="text-text-secondary text-[10px]">{bid.time}</p>
               </div>

@@ -163,7 +163,7 @@ export default function ProductsList() {
                       <span className="text-xs text-[#f87171]">Auction</span>
                     ) : (
                       <span className="text-sm">
-                        ${(product.digitalPrice / 100).toFixed(0)}
+                        ₹{(product.digitalPrice / 100).toFixed(0)}
                       </span>
                     )}
                   </td>

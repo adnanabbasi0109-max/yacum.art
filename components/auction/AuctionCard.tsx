@@ -77,7 +77,7 @@ export default function AuctionCard({
                 Current Bid
               </p>
               <p className="text-gold text-xl font-[family-name:var(--font-mono)]">
-                ${(currentBid / 100).toFixed(2)}
+                ₹{(currentBid / 100).toFixed(0)}
               </p>
             </div>
             <p className="text-text-secondary text-xs">

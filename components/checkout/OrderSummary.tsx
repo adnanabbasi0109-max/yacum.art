@@ -53,7 +53,7 @@ export default function OrderSummary({ shippingCost }: OrderSummaryProps) {
                 </p>
               </div>
               <span className="text-gold text-sm font-[family-name:var(--font-mono)]">
-                ${(item.price * item.quantity / 100).toFixed(2)}
+                ₹{(item.price * item.quantity / 100).toFixed(0)}
               </span>
             </div>
           ))}
@@ -91,7 +91,7 @@ export default function OrderSummary({ shippingCost }: OrderSummaryProps) {
                 </p>
               </div>
               <span className="text-gold text-sm font-[family-name:var(--font-mono)]">
-                ${(item.price * item.quantity / 100).toFixed(2)}
+                ₹{(item.price * item.quantity / 100).toFixed(0)}
               </span>
             </div>
           ))}
@@ -104,14 +104,14 @@ export default function OrderSummary({ shippingCost }: OrderSummaryProps) {
         <div className="flex justify-between text-sm">
           <span className="text-text-secondary">Subtotal</span>
           <span className="text-text-primary font-[family-name:var(--font-mono)]">
-            ${(subtotal / 100).toFixed(2)}
+            ₹{(subtotal / 100).toFixed(0)}
           </span>
         </div>
         {printItems.length > 0 && (
           <div className="flex justify-between text-sm">
             <span className="text-text-secondary">Shipping</span>
             <span className="text-text-primary font-[family-name:var(--font-mono)]">
-              ${(shippingCost / 100).toFixed(2)}
+              ₹{(shippingCost / 100).toFixed(0)}
             </span>
           </div>
         )}
@@ -119,7 +119,7 @@ export default function OrderSummary({ shippingCost }: OrderSummaryProps) {
         <div className="flex justify-between">
           <span className="text-text-primary font-medium">Total</span>
           <span className="text-gold text-xl font-[family-name:var(--font-mono)]">
-            ${(total / 100).toFixed(2)}
+            ₹{(total / 100).toFixed(0)}
           </span>
         </div>
       </div>
