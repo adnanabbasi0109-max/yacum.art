@@ -53,7 +53,7 @@ export default function OrderSummary({ shippingCost }: OrderSummaryProps) {
                 </p>
               </div>
               <span className="text-gold text-sm font-[family-name:var(--font-mono)]">
-                &#8377;{(item.price * item.quantity).toLocaleString("en-IN")}
+                ${(item.price * item.quantity / 100).toFixed(2)}
               </span>
             </div>
           ))}
@@ -91,7 +91,7 @@ export default function OrderSummary({ shippingCost }: OrderSummaryProps) {
                 </p>
               </div>
               <span className="text-gold text-sm font-[family-name:var(--font-mono)]">
-                &#8377;{(item.price * item.quantity).toLocaleString("en-IN")}
+                ${(item.price * item.quantity / 100).toFixed(2)}
               </span>
             </div>
           ))}
@@ -104,14 +104,14 @@ export default function OrderSummary({ shippingCost }: OrderSummaryProps) {
         <div className="flex justify-between text-sm">
           <span className="text-text-secondary">Subtotal</span>
           <span className="text-text-primary font-[family-name:var(--font-mono)]">
-            &#8377;{subtotal.toLocaleString("en-IN")}
+            ${(subtotal / 100).toFixed(2)}
           </span>
         </div>
         {printItems.length > 0 && (
           <div className="flex justify-between text-sm">
             <span className="text-text-secondary">Shipping</span>
             <span className="text-text-primary font-[family-name:var(--font-mono)]">
-              &#8377;{shippingCost.toLocaleString("en-IN")}
+              ${(shippingCost / 100).toFixed(2)}
             </span>
           </div>
         )}
@@ -119,7 +119,7 @@ export default function OrderSummary({ shippingCost }: OrderSummaryProps) {
         <div className="flex justify-between">
           <span className="text-text-primary font-medium">Total</span>
           <span className="text-gold text-xl font-[family-name:var(--font-mono)]">
-            &#8377;{total.toLocaleString("en-IN")}
+            ${(total / 100).toFixed(2)}
           </span>
         </div>
       </div>

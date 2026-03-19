@@ -63,7 +63,7 @@ export default function FrameSelector({ selected, onSelect, basePrice }: FrameSe
                 {frame.name}
               </span>
               <span className="text-[10px] text-gold font-[family-name:var(--font-mono)]">
-                +&#8377;{frame.priceAddon.toLocaleString("en-IN")}
+                +${(frame.priceAddon / 100).toFixed(2)}
               </span>
             </motion.button>
           );

@@ -13,6 +13,7 @@ export interface FrameOption {
 export interface Artwork {
   _id: string;
   slug: string;
+  title: string;
   verseId: string;
   arabic: string;
   translation: string;

@@ -81,7 +81,7 @@ export default function ArtworkCard({ artwork }: ArtworkCardProps) {
 
         {/* Info */}
         <h3 className="font-[family-name:var(--font-display)] text-lg text-text-primary group-hover:text-gold transition-colors duration-300">
-          {artwork.verseId.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+          {artwork.title || artwork.slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
         </h3>
         <p
           className="font-[family-name:var(--font-arabic)] text-sm text-text-secondary mt-1 line-clamp-1"
@@ -97,7 +97,7 @@ export default function ArtworkCard({ artwork }: ArtworkCardProps) {
             </span>
           ) : (
             <span className="text-gold text-sm font-[family-name:var(--font-mono)]">
-              &#8377;{artwork.digitalPrice.toLocaleString("en-IN")}
+              ${(artwork.digitalPrice / 100).toFixed(2)}
             </span>
           )}
         </div>

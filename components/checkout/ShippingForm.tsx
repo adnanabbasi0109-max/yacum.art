@@ -17,17 +17,17 @@ interface ShippingFormProps {
 }
 
 const shippingZones = [
-  { countries: ["IN"], price: 299, label: "India — ₹299 (5-7 days)" },
+  { countries: ["US", "CA"], price: 999, label: "North America — $9.99 (5-7 days)" },
   {
     countries: ["AE", "SA", "QA", "KW", "BH", "OM"],
     price: 1999,
-    label: "GCC — ₹1,999 (7-12 days)",
+    label: "GCC — $19.99 (7-12 days)",
   },
-  { countries: ["GB"], price: 2499, label: "UK — ₹2,499 (10-14 days)" },
+  { countries: ["GB"], price: 2499, label: "UK — $24.99 (10-14 days)" },
   {
-    countries: ["US", "CA"],
+    countries: ["IN"],
     price: 2999,
-    label: "North America — ₹2,999 (10-14 days)",
+    label: "India — $29.99 (10-14 days)",
   },
 ];
 
@@ -35,7 +35,7 @@ export function getShippingCost(country: string): number {
   for (const zone of shippingZones) {
     if (zone.countries.includes(country)) return zone.price;
   }
-  return 3499; // Rest of World
+  return 3499; // Rest of World ($34.99)
 }
 
 export default function ShippingForm({ onSubmit }: ShippingFormProps) {
@@ -46,7 +46,7 @@ export default function ShippingForm({ onSubmit }: ShippingFormProps) {
     city: "",
     state: "",
     postalCode: "",
-    country: "IN",
+    country: "US",
   });
 
   const handleChange = (
@@ -149,7 +149,7 @@ export default function ShippingForm({ onSubmit }: ShippingFormProps) {
           Estimated Shipping
         </p>
         <p className="text-gold font-[family-name:var(--font-mono)]">
-          &#8377;{getShippingCost(address.country).toLocaleString("en-IN")}
+          ${(getShippingCost(address.country) / 100).toFixed(2)}
         </p>
       </div>
 

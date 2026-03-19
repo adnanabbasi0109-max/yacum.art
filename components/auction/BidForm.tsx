@@ -33,12 +33,12 @@ export default function BidForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label className="text-text-secondary text-xs uppercase tracking-wider block mb-2">
-          Your Bid (minimum &#8377;{minimumBid.toLocaleString("en-IN")})
+          Your Bid (minimum ${(minimumBid / 100).toFixed(2)})
         </label>
         <div className="flex gap-2">
           <div className="relative flex-1">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary">
-              &#8377;
+              $
             </span>
             <input
               type="number"
@@ -75,7 +75,7 @@ export default function BidForm({
                   : "border-border-subtle text-text-secondary hover:border-gold/30"
               }`}
             >
-              &#8377;{quickBid.toLocaleString("en-IN")}
+              ${(quickBid / 100).toFixed(2)}
             </button>
           );
         })}

@@ -12,6 +12,26 @@ import ScrollProgress from "@/components/layout/ScrollProgress";
 import QRCodeBadge from "@/components/artwork/QRCodeBadge";
 import FrameSelector from "@/components/artwork/FrameSelector";
 
+function formatVerseRef(verseId: string): string {
+  const parts = verseId.split('-');
+  const nameParts: string[] = [];
+  const numberParts: string[] = [];
+  let hitNumber = false;
+
+  for (const part of parts) {
+    if (!hitNumber && /^\d+$/.test(part)) hitNumber = true;
+    if (hitNumber) numberParts.push(part);
+    else nameParts.push(part);
+  }
+
+  const name = nameParts.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join('-');
+  const nums = numberParts.length > 1
+    ? numberParts[0] + ':' + numberParts.slice(1).join('-')
+    : numberParts[0] || '';
+
+  return `${name} ${nums}`.trim();
+}
+
 const themeColors: Record<string, string> = {
   Light: "bg-gold/20 text-gold",
   Creation: "bg-teal/20 text-teal",
@@ -141,6 +161,11 @@ export default function ArtworkDetailPage() {
               {artwork.theme}
             </span>
 
+            {/* Artwork title */}
+            <h2 className="font-[family-name:var(--font-display)] text-2xl lg:text-3xl text-text-primary mb-4">
+              {artwork.title || artwork.slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+            </h2>
+
             {/* Arabic verse */}
             <h1
               className="font-[family-name:var(--font-arabic)] text-3xl lg:text-4xl leading-relaxed text-text-primary mb-4"
@@ -157,7 +182,7 @@ export default function ArtworkDetailPage() {
 
             {/* Verse reference */}
             <p className="text-text-secondary text-xs font-[family-name:var(--font-mono)] tracking-wider mb-6">
-              {artwork.verseId.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+              {formatVerseRef(artwork.verseId)}
             </p>
 
             {/* Gold divider */}
@@ -214,7 +239,7 @@ export default function ArtworkDetailPage() {
                 >
                   <div className="flex items-baseline justify-between">
                     <span className="text-gold text-2xl font-[family-name:var(--font-mono)]">
-                      &#8377;{artwork.digitalPrice.toLocaleString("en-IN")}
+                      ${(artwork.digitalPrice / 100).toFixed(2)}
                     </span>
                   </div>
                   <div className="space-y-2 text-text-secondary text-sm">
@@ -263,7 +288,7 @@ export default function ArtworkDetailPage() {
                             {size.dimensions}
                           </span>
                           <span className="block text-[10px] text-gold font-[family-name:var(--font-mono)] mt-1">
-                            &#8377;{Math.round(artwork.printPriceBase * size.priceMultiplier).toLocaleString("en-IN")}
+                            ${(artwork.printPriceBase * size.priceMultiplier / 100).toFixed(2)}
                           </span>
                         </button>
                       ))}

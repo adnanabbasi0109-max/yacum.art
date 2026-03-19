@@ -14,6 +14,7 @@ export interface IFrameOption {
 
 export interface IArtwork extends Document {
   slug: string;
+  title: string;
   verseId: string;
   arabic: string;
   translation: string;
@@ -54,6 +55,7 @@ const FrameOptionSchema = new Schema<IFrameOption>(
 const ArtworkSchema = new Schema<IArtwork>(
   {
     slug: { type: String, unique: true, required: true },
+    title: { type: String, required: true },
     verseId: { type: String, required: true },
     arabic: { type: String, required: true },
     translation: { type: String, required: true },

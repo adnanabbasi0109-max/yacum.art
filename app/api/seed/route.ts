@@ -18,6 +18,7 @@ const defaultFrameOptions = [
 const artworks = [
   {
     slug: "sibghatallah-take-on-allahs-colour",
+    title: "Sibghatallah",
     verseId: "al-baqarah-2-138",
     arabic: "صِبْغَةَ ٱللَّهِ ۖ وَمَنْ أَحْسَنُ مِنَ ٱللَّهِ صِبْغَةً ۖ وَنَحْنُ لَهُ عَـٰبِدُونَ",
     translation: '"Take on Allah\'s colour." And whose colour is better than Allah\'s? It is Him that we serve.',
@@ -35,6 +36,7 @@ const artworks = [
   },
   {
     slug: "thornless-lote-trees-sidrin-makhdud",
+    title: "Thornless Lote Trees",
     verseId: "al-waqiah-56-28",
     arabic: "فِى سِدْرٍ مَّخْضُودٍ",
     translation: "They shall be in the midst of thornless lote trees.",
@@ -52,6 +54,7 @@ const artworks = [
   },
   {
     slug: "divine-precision-sunflower",
+    title: "Divine Precision \u2014 Sunflower",
     verseId: "al-mulk-67-3-4",
     arabic: "ٱلَّذِى خَلَقَ سَبْعَ سَمَـٰوَٰتٍ طِبَاقًا ۖ مَّا تَرَىٰ فِى خَلْقِ ٱلرَّحْمَـٰنِ مِن تَفَـٰوُتٍ ۖ فَٱرْجِعِ ٱلْبَصَرَ هَلْ تَرَىٰ مِن فُطُورٍ",
     translation: "Who created the seven heavens one upon another. You will not see any inconsistency in the Merciful One's creation. Turn your vision again, can you see any flaw?",
@@ -69,6 +72,7 @@ const artworks = [
   },
   {
     slug: "divine-precision-leaf",
+    title: "Divine Precision \u2014 Leaf",
     verseId: "al-mulk-67-3-4",
     arabic: "ٱلَّذِى خَلَقَ سَبْعَ سَمَـٰوَٰتٍ طِبَاقًا ۖ مَّا تَرَىٰ فِى خَلْقِ ٱلرَّحْمَـٰنِ مِن تَفَـٰوُتٍ ۖ فَٱرْجِعِ ٱلْبَصَرَ هَلْ تَرَىٰ مِن فُطُورٍ",
     translation: "Who created the seven heavens one upon another. You will not see any inconsistency in the Merciful One's creation. Turn your vision again, can you see any flaw?",
@@ -86,6 +90,7 @@ const artworks = [
   },
   {
     slug: "radiant-sunflower-divine-design",
+    title: "Radiant Sunflower",
     verseId: "al-mulk-67-3-4",
     arabic: "ٱلَّذِى خَلَقَ سَبْعَ سَمَـٰوَٰتٍ طِبَاقًا ۖ مَّا تَرَىٰ فِى خَلْقِ ٱلرَّحْمَـٰنِ مِن تَفَـٰوُتٍ ۖ فَٱرْجِعِ ٱلْبَصَرَ هَلْ تَرَىٰ مِن فُطُورٍ",
     translation: "Who created the seven heavens one upon another. You will not see any inconsistency in the Merciful One's creation. Turn your vision again, can you see any flaw?",
@@ -103,6 +108,7 @@ const artworks = [
   },
   {
     slug: "honeycomb-flawless-design",
+    title: "Flawless Design \u2014 Honeycomb",
     verseId: "al-mulk-67-3-4",
     arabic: "ٱلَّذِى خَلَقَ سَبْعَ سَمَـٰوَٰتٍ طِبَاقًا ۖ مَّا تَرَىٰ فِى خَلْقِ ٱلرَّحْمَـٰنِ مِن تَفَـٰوُتٍ ۖ فَٱرْجِعِ ٱلْبَصَرَ هَلْ تَرَىٰ مِن فُطُورٍ",
     translation: "Who created the seven heavens one upon another. You will not see any inconsistency in the Merciful One's creation. Turn your vision again, can you see any flaw?",
@@ -120,6 +126,7 @@ const artworks = [
   },
   {
     slug: "mountains-raised-in-measure",
+    title: "Mountains Raised in Measure",
     verseId: "al-ghashiyah-88-19",
     arabic: "وَإِلَى ٱلْجِبَالِ كَيْفَ نُصِبَتْ",
     translation: "And the mountains: how they were fixed?",
@@ -137,6 +144,7 @@ const artworks = [
   },
   {
     slug: "birds-in-flight-divine-mercy",
+    title: "Birds in Flight",
     verseId: "al-mulk-67-19",
     arabic: "أَوَلَمْ يَرَوْا۟ إِلَى ٱلطَّيْرِ فَوْقَهُمْ صَـٰٓفَّـٰتٍ وَيَقْبِضْنَ ۚ مَا يُمْسِكُهُنَّ إِلَّا ٱلرَّحْمَـٰنُ ۚ إِنَّهُ بِكُلِّ شَىْءٍۭ بَصِيرٌ",
     translation: "Have they not seen birds above them spreading and closing their wings, with none holding them except the Merciful One? He oversees everything.",
