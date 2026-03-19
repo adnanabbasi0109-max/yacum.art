@@ -22,7 +22,10 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
   }
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(uri).then((m) => {
+    cached.promise = mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 10000,
+      connectTimeoutMS: 10000,
+    }).then((m) => {
       cached.conn = m;
       return m;
     });
