@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import Order from '@/models/Order';
-import { getStripe } from '@/lib/stripe';
+import Razorpay from 'razorpay';
 
 export async function POST(request: NextRequest) {
   try {
+    const keyId = process.env.RAZORPAY_KEY_ID;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+    if (!keyId || !keySecret) {
+      return NextResponse.json(
+        { error: 'Payment gateway not configured. Please set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET.' },
+        { status: 500 }
+      );
+    }
+
     await connectToDatabase();
 
     const body = await request.json();
@@ -14,7 +24,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Calculate total
+    // Calculate total in paise
     const total = items.reduce(
       (sum: number, item: { price: number; quantity: number }) =>
         sum + item.price * item.quantity,
@@ -35,39 +45,30 @@ export async function POST(request: NextRequest) {
       shippingAddress: shippingAddress || undefined,
     });
 
-    // Create Stripe checkout session
-    const stripe = getStripe();
-    const lineItems = items.map((item: { title: string; type: string; printSize?: string; price: number; quantity: number }) => ({
-      price_data: {
-        currency: 'inr',
-        product_data: {
-          name: `${item.title} (${item.type === 'digital' ? 'Digital Download' : `Print — ${item.printSize}`})`,
-        },
-        unit_amount: item.price, // Already in cents
-      },
-      quantity: item.quantity,
-    }));
+    // Create Razorpay order
+    const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
 
-    const origin = request.headers.get('origin') || 'https://yacum.art';
-
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: lineItems,
-      mode: 'payment',
-      customer_email: email,
-      success_url: `${origin}/checkout/success?order=${order.orderNumber}`,
-      cancel_url: `${origin}/checkout`,
-      metadata: {
+    const razorpayOrder = await razorpay.orders.create({
+      amount: total, // in paise
+      currency: 'INR',
+      receipt: order.orderNumber,
+      notes: {
         orderId: order._id.toString(),
         orderNumber: order.orderNumber,
       },
     });
 
-    // Save stripe session ID
-    order.stripeSessionId = session.id;
+    // Save razorpay order ID
+    order.razorpayOrderId = razorpayOrder.id;
     await order.save();
 
-    return NextResponse.json({ url: session.url });
+    return NextResponse.json({
+      orderId: razorpayOrder.id,
+      amount: total,
+      currency: 'INR',
+      orderNumber: order.orderNumber,
+      keyId,
+    });
   } catch (error) {
     console.error('Checkout error:', error);
     const message = error instanceof Error ? error.message : 'Checkout failed';

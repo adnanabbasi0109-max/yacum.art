@@ -4,10 +4,19 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Script from "next/script";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import CustomCursor from "@/components/layout/CustomCursor";
 import { useCartStore } from "@/store/cartStore";
+
+declare global {
+  interface Window {
+    Razorpay: new (options: Record<string, unknown>) => {
+      open: () => void;
+    };
+  }
+}
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -44,6 +53,7 @@ export default function CheckoutPage() {
     setError("");
 
     try {
+      // 1. Create order + Razorpay order
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -72,15 +82,60 @@ export default function CheckoutPage() {
       });
 
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Checkout failed");
 
-      if (!res.ok) {
-        throw new Error(data.error || "Checkout failed");
-      }
+      // 2. Open Razorpay payment popup
+      const options = {
+        key: data.keyId,
+        amount: data.amount,
+        currency: data.currency,
+        name: "YACUM.ART",
+        description: "Quranic Art Purchase",
+        order_id: data.orderId,
+        prefill: {
+          name: form.name,
+          email: form.email,
+        },
+        theme: {
+          color: "#C8A96E",
+        },
+        handler: async (response: {
+          razorpay_order_id: string;
+          razorpay_payment_id: string;
+          razorpay_signature: string;
+        }) => {
+          // 3. Verify payment
+          try {
+            const verifyRes = await fetch("/api/checkout/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                ...response,
+                orderNumber: data.orderNumber,
+              }),
+            });
 
-      // Redirect to Stripe checkout
-      if (data.url) {
-        window.location.href = data.url;
-      }
+            const verifyData = await verifyRes.json();
+            if (verifyData.success) {
+              router.push(`/checkout/success?order=${data.orderNumber}`);
+            } else {
+              setError("Payment verification failed. Please contact support.");
+              setProcessing(false);
+            }
+          } catch {
+            setError("Payment verification failed. Please contact support.");
+            setProcessing(false);
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            setProcessing(false);
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setProcessing(false);
@@ -89,6 +144,7 @@ export default function CheckoutPage() {
 
   return (
     <>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       <CustomCursor />
       <Navbar />
       <main className="min-h-screen bg-bg-primary pt-24 pb-24">
@@ -211,12 +267,12 @@ export default function CheckoutPage() {
                   }`}
                 >
                   {processing
-                    ? "Redirecting to payment..."
+                    ? "Processing..."
                     : `Pay ₹${(total / 100).toFixed(0)}`}
                 </motion.button>
 
                 <p className="text-text-secondary text-xs text-center">
-                  You&apos;ll be redirected to Stripe for secure payment.
+                  Secure payment via Razorpay. UPI, cards, wallets &amp; netbanking accepted.
                   Digital downloads available immediately after payment.
                 </p>
               </motion.div>

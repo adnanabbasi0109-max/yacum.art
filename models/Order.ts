@@ -18,7 +18,8 @@ export interface IOrder extends Document {
   items: IOrderItem[];
   total: number;
   paymentStatus: 'pending' | 'paid' | 'failed';
-  stripeSessionId?: string;
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
   shippingAddress?: {
     address: string;
     city: string;
@@ -55,7 +56,8 @@ const OrderSchema = new Schema<IOrder>(
       enum: ['pending', 'paid', 'failed'],
       default: 'pending',
     },
-    stripeSessionId: { type: String },
+    razorpayOrderId: { type: String },
+    razorpayPaymentId: { type: String },
     shippingAddress: {
       address: String,
       city: String,
