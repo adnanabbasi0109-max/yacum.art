@@ -155,15 +155,6 @@ export default function ArtworkDetailPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            {/* Theme badge */}
-            <span
-              className={`inline-block text-[10px] px-3 py-1 tracking-widest uppercase mb-6 ${
-                themeColors[artwork.theme] || "bg-gold/20 text-gold"
-              }`}
-            >
-              {artwork.theme}
-            </span>
-
             {/* Artwork title */}
             <h2 className="font-[family-name:var(--font-display)] text-2xl lg:text-3xl text-text-primary mb-4">
               {artwork.title || artwork.slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}

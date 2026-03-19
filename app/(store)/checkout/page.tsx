@@ -11,7 +11,7 @@ import { useCartStore } from "@/store/cartStore";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, clearCart } = useCartStore();
+  const { items } = useCartStore();
   const total = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const hasPrintItems = items.some((i) => i.type === "print");
 
@@ -24,10 +24,7 @@ export default function CheckoutPage() {
     zip: "",
   });
   const [processing, setProcessing] = useState(false);
-  const [completed, setCompleted] = useState(false);
-  const [downloadLinks, setDownloadLinks] = useState<
-    { title: string; url: string }[]
-  >([]);
+  const [error, setError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -44,31 +41,10 @@ export default function CheckoutPage() {
   const handleCheckout = async () => {
     if (!canSubmit) return;
     setProcessing(true);
+    setError("");
 
-    // Build download links for digital items
-    const digitalItems = items.filter((i) => i.type === "digital");
-    const links = digitalItems.map((item) => {
-      // Extract base filename from slug
-      const slugToFile: Record<string, string> = {
-        "sibghatallah-take-on-allahs-colour": "sibghatallah",
-        "thornless-lote-trees-sidrin-makhdud": "thornless-lote-trees",
-        "divine-precision-sunflower": "sunflower-closeup",
-        "divine-precision-leaf": "divine-leaf",
-        "radiant-sunflower-divine-design": "sunflower-garden",
-        "honeycomb-flawless-design": "honeycomb",
-        "mountains-raised-in-measure": "mountains",
-        "birds-in-flight-divine-mercy": "birds-in-flight",
-      };
-      const file = slugToFile[item.slug] || item.slug;
-      return {
-        title: item.title,
-        url: `/downloads/${file}.png`,
-      };
-    });
-
-    // Save order to database
     try {
-      await fetch("/api/orders", {
+      const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -86,105 +62,30 @@ export default function CheckoutPage() {
           })),
           shippingAddress: hasPrintItems
             ? {
-                name: form.name,
                 address: form.address,
                 city: form.city,
                 country: form.country,
                 zip: form.zip,
               }
             : null,
-          total,
         }),
       });
-    } catch {
-      // Order saved or not, still show downloads
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Checkout failed");
+      }
+
+      // Redirect to Stripe checkout
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+      setProcessing(false);
     }
-
-    setDownloadLinks(links);
-    setCompleted(true);
-    setProcessing(false);
-    clearCart();
   };
-
-  if (completed) {
-    return (
-      <>
-        <CustomCursor />
-        <Navbar />
-        <main className="min-h-screen bg-bg-primary pt-24 pb-24">
-          <div className="max-w-2xl mx-auto px-6 text-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="w-16 h-16 mx-auto mb-6 rounded-full border-2 border-gold flex items-center justify-center">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#C8A96E"
-                  strokeWidth="2"
-                >
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              </div>
-              <h2 className="font-[family-name:var(--font-display)] text-3xl text-text-primary mb-3 italic">
-                Order Confirmed
-              </h2>
-              <p className="text-text-secondary mb-8">
-                Thank you for your purchase. Your digital downloads are ready below.
-              </p>
-
-              {downloadLinks.length > 0 && (
-                <div className="space-y-3 mb-8">
-                  <h3 className="text-gold text-sm tracking-widest uppercase mb-4">
-                    Your Downloads
-                  </h3>
-                  {downloadLinks.map((link) => (
-                    <a
-                      key={link.url}
-                      href={link.url}
-                      download
-                      className="flex items-center justify-between p-4 border border-border-subtle hover:border-gold transition-colors group"
-                    >
-                      <span className="text-text-primary group-hover:text-gold transition-colors">
-                        {link.title}
-                      </span>
-                      <span className="text-gold text-sm tracking-wider uppercase flex items-center gap-2">
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                        >
-                          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-                          <polyline points="7 10 12 15 17 10" />
-                          <line x1="12" y1="15" x2="12" y2="3" />
-                        </svg>
-                        Download PNG
-                      </span>
-                    </a>
-                  ))}
-                </div>
-              )}
-
-              <button
-                onClick={() => router.push("/gallery")}
-                className="text-gold text-sm tracking-wider uppercase hover:text-gold-light transition-colors"
-              >
-                Back to Gallery &rarr;
-              </button>
-            </motion.div>
-          </div>
-        </main>
-        <Footer />
-      </>
-    );
-  }
 
   return (
     <>
@@ -292,7 +193,12 @@ export default function CheckoutPage() {
                   </div>
                 )}
 
-                {/* Checkout button */}
+                {/* Error message */}
+                {error && (
+                  <p className="text-auction-red text-sm">{error}</p>
+                )}
+
+                {/* Pay button */}
                 <motion.button
                   whileHover={{ scale: canSubmit ? 1.01 : 1 }}
                   whileTap={{ scale: canSubmit ? 0.98 : 1 }}
@@ -304,13 +210,14 @@ export default function CheckoutPage() {
                       : "bg-gold/30 text-bg-primary/50 cursor-not-allowed"
                   }`}
                 >
-                  {processing ? "Processing..." : `Complete Order — $${(total / 100).toFixed(2)}`}
+                  {processing
+                    ? "Redirecting to payment..."
+                    : `Pay $${(total / 100).toFixed(2)}`}
                 </motion.button>
 
-                <p className="text-text-secondary text-xs">
-                  Digital downloads are available immediately after checkout.
-                  {hasPrintItems &&
-                    " Print orders ship within 5-7 business days."}
+                <p className="text-text-secondary text-xs text-center">
+                  You&apos;ll be redirected to Stripe for secure payment.
+                  Digital downloads available immediately after payment.
                 </p>
               </motion.div>
 

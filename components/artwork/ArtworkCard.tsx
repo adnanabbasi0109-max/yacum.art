@@ -46,17 +46,6 @@ export default function ArtworkCard({ artwork }: ArtworkCardProps) {
             sizes="(max-width: 768px) 100vw, 320px"
           />
 
-          {/* Theme badge */}
-          <div className="absolute top-3 left-3">
-            <span
-              className={`text-[10px] px-2 py-1 tracking-wider uppercase ${
-                themeColors[artwork.theme] || "bg-gold/20 text-gold"
-              }`}
-            >
-              {artwork.theme}
-            </span>
-          </div>
-
           {/* QR indicator */}
           <div className="absolute bottom-3 right-3 w-8 h-8 border border-white/20 bg-bg-primary/60 backdrop-blur-sm flex items-center justify-center">
             <svg
