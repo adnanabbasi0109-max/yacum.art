@@ -11,6 +11,7 @@ import ProtectedImage from "@/components/artwork/ProtectedImage";
 import ScrollProgress from "@/components/layout/ScrollProgress";
 import QRCodeBadge from "@/components/artwork/QRCodeBadge";
 import { useCartStore } from "@/store/cartStore";
+import { useUiStore } from "@/store/uiStore";
 import FrameSelector from "@/components/artwork/FrameSelector";
 
 function formatVerseRef(verseId: string): string {
@@ -62,6 +63,7 @@ export default function ArtworkDetailPage() {
   const [selectedFrame, setSelectedFrame] = useState("thin-black");
   const [addedToCart, setAddedToCart] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
+  const setCartOpen = useUiStore((s) => s.setCartOpen);
 
   useEffect(() => {
     fetch(`/api/artworks/${slug}`)
@@ -320,6 +322,7 @@ export default function ArtworkDetailPage() {
                   price,
                 });
                 setAddedToCart(true);
+                setCartOpen(true);
                 setTimeout(() => setAddedToCart(false), 2000);
               }}
               className={`w-full py-4 text-sm tracking-widest uppercase font-medium transition-colors duration-200 ${
