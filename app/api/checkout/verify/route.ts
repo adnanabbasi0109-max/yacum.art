@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { randomUUID } from 'crypto';
 import connectToDatabase from '@/lib/db';
 import Order from '@/models/Order';
 
@@ -23,17 +24,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 });
     }
 
-    // Mark order as paid
+    // Generate a secure download token
+    const downloadToken = randomUUID();
+
+    // Mark order as paid and store the download token
     await connectToDatabase();
     await Order.findOneAndUpdate(
       { orderNumber },
       {
         paymentStatus: 'paid',
         razorpayPaymentId: razorpay_payment_id,
+        downloadToken,
       }
     );
 
-    return NextResponse.json({ success: true, orderNumber });
+    return NextResponse.json({ success: true, orderNumber, downloadToken });
   } catch (error) {
     console.error('Verify error:', error);
     return NextResponse.json({ error: 'Verification failed' }, { status: 500 });

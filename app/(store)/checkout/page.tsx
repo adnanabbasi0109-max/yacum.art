@@ -117,7 +117,7 @@ export default function CheckoutPage() {
 
             const verifyData = await verifyRes.json();
             if (verifyData.success) {
-              router.push(`/checkout/success?order=${data.orderNumber}`);
+              router.push(`/checkout/success?order=${data.orderNumber}&token=${verifyData.downloadToken}`);
             } else {
               setError("Payment verification failed. Please contact support.");
               setProcessing(false);

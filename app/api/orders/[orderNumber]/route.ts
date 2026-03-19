@@ -2,26 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db';
 import Order from '@/models/Order';
 
-const slugToFile: Record<string, string> = {
-  'sibghatallah-take-on-allahs-colour': 'sibghatallah',
-  'thornless-lote-trees-sidrin-makhdud': 'thornless-lote-trees',
-  'divine-precision-sunflower': 'sunflower-closeup',
-  'divine-precision-leaf': 'divine-leaf',
-  'radiant-sunflower-divine-design': 'sunflower-garden',
-  'honeycomb-flawless-design': 'honeycomb',
-  'mountains-raised-in-measure': 'mountains',
-  'birds-in-flight-divine-mercy': 'birds-in-flight',
-};
-
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ orderNumber: string }> }
 ) {
   try {
     await connectToDatabase();
     const { orderNumber } = await params;
+    const token = request.nextUrl.searchParams.get('token');
 
-    const order = await Order.findOne({ orderNumber }).lean();
+    if (!token) {
+      return NextResponse.json({ error: 'Missing token' }, { status: 400 });
+    }
+
+    const order = await Order.findOne({ orderNumber, downloadToken: token }).lean();
 
     if (!order) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
@@ -31,13 +25,12 @@ export async function GET(
       return NextResponse.json({ error: 'Payment not completed' }, { status: 403 });
     }
 
-    // Return download info for digital items
+    // Return digital items for the success page
     const digitalItems = order.items
       .filter((item: { type: string }) => item.type === 'digital')
       .map((item: { slug: string; title: string }) => ({
         title: item.title,
-        filename: `${slugToFile[item.slug] || item.slug}.png`,
-        url: `/downloads/${slugToFile[item.slug] || item.slug}.png`,
+        slug: item.slug,
       }));
 
     return NextResponse.json({
@@ -46,7 +39,7 @@ export async function GET(
       items: digitalItems,
     });
   } catch (error) {
-    console.error('Download API error:', error);
+    console.error('Order fetch error:', error);
     return NextResponse.json({ error: 'Failed to fetch order' }, { status: 500 });
   }
 }

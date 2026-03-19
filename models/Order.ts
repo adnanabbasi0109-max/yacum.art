@@ -11,21 +11,25 @@ export interface IOrderItem {
   quantity: number;
 }
 
+export interface IShippingAddress {
+  address: string;
+  city: string;
+  country: string;
+  zip: string;
+}
+
 export interface IOrder extends Document {
   orderNumber: string;
   email: string;
   name: string;
   items: IOrderItem[];
   total: number;
+  currency: string;
   paymentStatus: 'pending' | 'paid' | 'failed';
   razorpayOrderId?: string;
   razorpayPaymentId?: string;
-  shippingAddress?: {
-    address: string;
-    city: string;
-    country: string;
-    zip: string;
-  };
+  downloadToken?: string;
+  shippingAddress?: IShippingAddress;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -56,8 +60,10 @@ const OrderSchema = new Schema<IOrder>(
       enum: ['pending', 'paid', 'failed'],
       default: 'pending',
     },
+    currency: { type: String, default: 'INR' },
     razorpayOrderId: { type: String },
     razorpayPaymentId: { type: String },
+    downloadToken: { type: String, index: true },
     shippingAddress: {
       address: String,
       city: String,
