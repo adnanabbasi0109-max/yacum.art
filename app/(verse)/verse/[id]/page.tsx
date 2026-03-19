@@ -60,7 +60,7 @@ export default function VersePage() {
   return (
     <>
       <head>
-        <title>{verse.translation.slice(0, 60)} — yacum.art</title>
+        <title>{verse.translation.slice(0, 60)} — Yacum Art</title>
       </head>
 
       <main className="min-h-screen bg-[#0A0A0A]">
@@ -159,7 +159,7 @@ export default function VersePage() {
               href="https://yacum.art"
               className="block text-center text-xs text-text-secondary/50 hover:text-text-secondary transition-colors duration-300"
             >
-              yacum.art
+              Yacum Art
             </a>
           </motion.div>
         </motion.div>

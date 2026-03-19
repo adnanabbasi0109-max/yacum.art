@@ -89,7 +89,7 @@ export default function CheckoutPage() {
         key: data.keyId,
         amount: data.amount,
         currency: data.currency,
-        name: "YACUM.ART",
+        name: "Yacum Art",
         description: "Quranic Art Purchase",
         order_id: data.orderId,
         prefill: {

@@ -3,7 +3,7 @@ import "./globals.css";
 import CartDrawer from "@/components/checkout/CartDrawer";
 
 export const metadata: Metadata = {
-  title: "YACUM.ART — Quranic Verse Art",
+  title: "Yacum Art — Quranic Verse Art",
   description:
     "Premium digital paintings themed on Quranic verses. Each piece embeds a QR code linking to verse recitation and layered meaning.",
   icons: {
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     "Muslim art",
   ],
   openGraph: {
-    title: "YACUM.ART — Quranic Verse Art",
+    title: "Yacum Art — Quranic Verse Art",
     description:
       "Premium digital paintings themed on Quranic verses.",
     type: "website",
