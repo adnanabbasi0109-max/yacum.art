@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import { randomUUID } from 'crypto';
 import connectToDatabase from '@/lib/db';
 import Order from '@/models/Order';
+import { sendOrderNotification } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,14 +30,33 @@ export async function POST(request: NextRequest) {
 
     // Mark order as paid and store the download token
     await connectToDatabase();
-    await Order.findOneAndUpdate(
+    const order = await Order.findOneAndUpdate(
       { orderNumber },
       {
         paymentStatus: 'paid',
         razorpayPaymentId: razorpay_payment_id,
         downloadToken,
-      }
+      },
+      { new: true }
     );
+
+    // Send order notification emails (admin + customer)
+    if (order) {
+      sendOrderNotification({
+        orderNumber: order.orderNumber,
+        customerName: order.name,
+        customerEmail: order.email,
+        items: order.items.map((item) => ({
+          title: item.title,
+          type: item.type,
+          price: item.price,
+          printSize: item.printSize,
+          frameOption: item.frameOption,
+        })),
+        total: order.total,
+        shippingAddress: order.shippingAddress || undefined,
+      }).catch((err) => console.error('Email error:', err));
+    }
 
     return NextResponse.json({ success: true, orderNumber, downloadToken });
   } catch (error) {

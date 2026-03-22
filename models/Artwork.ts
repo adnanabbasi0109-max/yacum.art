@@ -17,7 +17,12 @@ export interface IArtwork extends Document {
   title: string;
   verseId: string;
   arabic: string;
+  transliteration?: string;
   translation: string;
+  tafsir?: string;
+  surah?: string;
+  surahNumber?: number;
+  ayah?: number;
   theme: string;
   previewImageUrl: string;
   highResS3Key: string;
@@ -58,7 +63,12 @@ const ArtworkSchema = new Schema<IArtwork>(
     title: { type: String, required: true },
     verseId: { type: String, required: true },
     arabic: { type: String, required: true },
+    transliteration: { type: String },
     translation: { type: String, required: true },
+    tafsir: { type: String },
+    surah: { type: String },
+    surahNumber: { type: Number },
+    ayah: { type: Number },
     theme: { type: String, required: true },
     previewImageUrl: { type: String, required: true },
     highResS3Key: { type: String, required: true },

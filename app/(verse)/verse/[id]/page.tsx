@@ -1,11 +1,22 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { verses } from "@/data/verses";
-import RecitationPlayer from "@/components/verse/RecitationPlayer";
-import VerseLayer from "@/components/verse/VerseLayer";
+
+interface VerseData {
+  id: string;
+  arabic: string;
+  transliteration: string;
+  translation: string;
+  tafsir: string;
+  surah: string;
+  surahNumber: number;
+  ayah: number;
+  theme: string;
+  title: string;
+  slug: string;
+}
 
 const stagger = {
   hidden: {},
@@ -16,21 +27,35 @@ const stagger = {
 
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] as const } },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  },
 };
 
 export default function VersePage() {
   const params = useParams<{ id: string }>();
-  const verse = verses.find((v) => v.id === params.id);
-  const [openLayer, setOpenLayer] = useState<number | null>(null);
+  const [verse, setVerse] = useState<VerseData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
 
-  const handleToggleLayer = useCallback(
-    (depth: number) => {
-      setOpenLayer((prev) => (prev === depth ? null : depth));
-    },
-    []
-  );
+  useEffect(() => {
+    async function fetchVerse() {
+      try {
+        const res = await fetch(`/api/verse/${params.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setVerse(data);
+        }
+      } catch (err) {
+        console.error("Failed to load verse:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    if (params.id) fetchVerse();
+  }, [params.id]);
 
   const handleCopyUrl = useCallback(async () => {
     try {
@@ -38,7 +63,7 @@ export default function VersePage() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback: do nothing
+      // Fallback
     }
   }, []);
 
@@ -46,13 +71,24 @@ export default function VersePage() {
     const text = verse
       ? `${verse.translation} — ${verse.surah} ${verse.surahNumber}:${verse.ayah}\n\n${window.location.href}`
       : window.location.href;
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
+    window.open(
+      `https://wa.me/?text=${encodeURIComponent(text)}`,
+      "_blank"
+    );
   }, [verse]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-[#d4af37] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!verse) {
     return (
       <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
-        <p className="text-text-secondary text-sm">Verse not found</p>
+        <p className="text-[#888] text-sm">Verse not found</p>
       </div>
     );
   }
@@ -60,7 +96,9 @@ export default function VersePage() {
   return (
     <>
       <head>
-        <title>{verse.translation.slice(0, 60)} — Yacum Art</title>
+        <title>
+          {verse.surah} {verse.surahNumber}:{verse.ayah} — Yacum Art
+        </title>
       </head>
 
       <main className="min-h-screen bg-[#0A0A0A]">
@@ -70,94 +108,110 @@ export default function VersePage() {
           initial="hidden"
           animate="show"
         >
-          {/* Arabic verse — slow fade in */}
+          {/* ─── AYAT ─── */}
           <motion.div
-            className="text-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+            transition={{
+              duration: 1.5,
+              ease: [0.25, 0.46, 0.45, 0.94],
+            }}
           >
-            <p
-              className="font-[family-name:var(--font-arabic)] text-3xl sm:text-4xl text-gold leading-loose"
-              dir="rtl"
-              lang="ar"
-            >
-              {verse.arabic}
+            <p className="text-xs text-[#d4af37] tracking-[0.3em] uppercase text-center mb-6">
+              Ayat
+            </p>
+
+            <div className="border-t border-[#d4af37]/20 pt-6">
+              <p
+                className="font-[family-name:var(--font-arabic)] text-3xl sm:text-4xl text-[#d4af37] leading-loose text-center"
+                dir="rtl"
+                lang="ar"
+              >
+                {verse.arabic}
+              </p>
+            </div>
+
+            {verse.transliteration && (
+              <p className="text-center italic text-[#888] text-sm sm:text-base mt-4">
+                {verse.transliteration}
+              </p>
+            )}
+
+            {/* Surah reference */}
+            <p className="text-center text-[#666] text-xs tracking-widest uppercase mt-4">
+              {verse.surah} {verse.surahNumber}:{verse.ayah}
             </p>
           </motion.div>
 
-          {/* Transliteration */}
-          <motion.p
-            className="text-center italic text-text-secondary text-sm sm:text-base"
-            variants={fadeUp}
-          >
-            {verse.transliteration}
-          </motion.p>
-
-          {/* English translation */}
-          <motion.p
-            className="text-center font-[family-name:var(--font-display)] text-text-primary text-lg sm:text-xl leading-relaxed"
-            variants={fadeUp}
-          >
-            {verse.translation}
-          </motion.p>
-
-          {/* Surah reference */}
-          <motion.p
-            className="text-center text-text-secondary text-xs tracking-widest uppercase"
-            variants={fadeUp}
-          >
-            {verse.surah} {verse.surahNumber}:{verse.ayah}
-          </motion.p>
-
-          {/* Recitation Player */}
+          {/* ─── MEANING ─── */}
           <motion.div variants={fadeUp}>
-            <RecitationPlayer recitationUrl={verse.recitationUrl} />
+            <p className="text-xs text-[#d4af37] tracking-[0.3em] uppercase text-center mb-6">
+              Meaning
+            </p>
+
+            <div className="border-t border-[#d4af37]/20 pt-6">
+              <p className="text-center font-[family-name:var(--font-display)] text-white text-lg sm:text-xl leading-relaxed">
+                {verse.translation}
+              </p>
+            </div>
           </motion.div>
 
-          {/* Meaning Layers */}
+          {/* ─── TAFSIR ─── */}
+          {verse.tafsir && (
+            <motion.div variants={fadeUp}>
+              <p className="text-xs text-[#d4af37] tracking-[0.3em] uppercase text-center mb-6">
+                Tafsir
+              </p>
+
+              <div className="border-t border-[#d4af37]/20 pt-6">
+                <p className="text-[#ccc] text-sm sm:text-base leading-relaxed text-center">
+                  {verse.tafsir}
+                </p>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Divider */}
           <motion.div variants={fadeUp}>
-            <h2 className="text-xs text-text-secondary tracking-widest uppercase mb-3">
-              Layers of Meaning
-            </h2>
-            <div className="border-t border-border-subtle">
-              {verse.meaningLayers.map((layer) => (
-                <VerseLayer
-                  key={layer.depth}
-                  layer={layer}
-                  isOpen={openLayer === layer.depth}
-                  onToggle={() => handleToggleLayer(layer.depth)}
-                />
-              ))}
-            </div>
+            <div className="w-full border-t border-[#333]" />
           </motion.div>
 
           {/* Share section */}
           <motion.div variants={fadeUp} className="space-y-3">
-            <h2 className="text-xs text-text-secondary tracking-widest uppercase text-center">
+            <p className="text-xs text-[#666] tracking-widest uppercase text-center">
               Share this verse
-            </h2>
+            </p>
             <div className="flex gap-3 justify-center">
               <button
                 onClick={handleCopyUrl}
-                className="px-5 py-2.5 border border-gold text-gold text-sm hover:bg-gold/10 transition-colors duration-300 rounded-sm"
+                className="px-5 py-2.5 border border-[#d4af37] text-[#d4af37] text-sm hover:bg-[#d4af37]/10 transition-colors duration-300 rounded-sm"
               >
                 {copied ? "Copied!" : "Copy Link"}
               </button>
               <button
                 onClick={handleWhatsAppShare}
-                className="px-5 py-2.5 border border-gold text-gold text-sm hover:bg-gold/10 transition-colors duration-300 rounded-sm"
+                className="px-5 py-2.5 border border-[#d4af37] text-[#d4af37] text-sm hover:bg-[#d4af37]/10 transition-colors duration-300 rounded-sm"
               >
                 WhatsApp
               </button>
             </div>
           </motion.div>
 
-          {/* Subtle branding */}
+          {/* View artwork link */}
+          <motion.div variants={fadeUp} className="text-center">
+            <a
+              href={`/artwork/${verse.slug}`}
+              className="inline-block px-6 py-3 bg-[#d4af37] text-[#0a0a0a] text-sm font-semibold hover:bg-[#c9a432] transition-colors duration-300 rounded-sm"
+            >
+              View Artwork
+            </a>
+          </motion.div>
+
+          {/* Branding */}
           <motion.div variants={fadeUp} className="pt-8">
             <a
               href="https://yacum.art"
-              className="block text-center text-xs text-text-secondary/50 hover:text-text-secondary transition-colors duration-300"
+              className="block text-center text-xs text-[#444] hover:text-[#666] transition-colors duration-300"
             >
               Yacum Art
             </a>
