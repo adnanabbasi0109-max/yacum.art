@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import connectToDatabase from "@/lib/db";
 import User from "@/models/User";
 import { signToken, COOKIE_NAME } from "@/lib/auth";
+import { sendNewUserNotification } from "@/lib/email";
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,6 +46,13 @@ export async function POST(request: NextRequest) {
       email: user.email,
       name: user.name,
     });
+
+    // Notify admin about new signup
+    sendNewUserNotification({
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt || new Date(),
+    }).catch((err) => console.error('Signup email error:', err));
 
     const response = NextResponse.json({
       user: { id: user._id, email: user.email, name: user.name },

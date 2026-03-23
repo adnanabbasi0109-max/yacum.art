@@ -151,4 +151,57 @@ export async function sendOrderNotification(order: OrderEmailData) {
   }
 }
 
+interface NewUserData {
+  name: string;
+  email: string;
+  createdAt: Date;
+}
+
+export async function sendNewUserNotification(user: NewUserData) {
+  const date = new Date(user.createdAt).toLocaleString('en-IN', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    timeZone: 'Asia/Kolkata',
+  });
+
+  const html = `
+    <div style="font-family:'Segoe UI',sans-serif;max-width:600px;margin:0 auto;background:#0a0a0a;color:#fff;padding:32px;border-radius:8px;">
+      <div style="text-align:center;margin-bottom:24px;">
+        <h1 style="color:#d4af37;font-size:24px;margin:0;">New Customer Signed Up!</h1>
+      </div>
+      <div style="background:#111;padding:20px;border-radius:6px;">
+        <table style="width:100%;">
+          <tr>
+            <td style="padding:8px 0;color:#999;width:80px;">Name</td>
+            <td style="padding:8px 0;color:#fff;font-weight:bold;">${user.name}</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 0;color:#999;">Email</td>
+            <td style="padding:8px 0;color:#d4af37;">${user.email}</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 0;color:#999;">Joined</td>
+            <td style="padding:8px 0;color:#fff;">${date}</td>
+          </tr>
+        </table>
+      </div>
+      <div style="margin-top:24px;text-align:center;color:#666;font-size:12px;">
+        <p>Yacum Art — yacum.art</p>
+      </div>
+    </div>
+  `;
+
+  try {
+    await transporter.sendMail({
+      from: `"Yacum Art" <${process.env.EMAIL_USER || ADMIN_EMAIL}>`,
+      to: ADMIN_EMAIL,
+      subject: `New Signup: ${user.name} (${user.email})`,
+      html,
+    });
+    console.log(`Signup notification sent for ${user.email}`);
+  } catch (err) {
+    console.error('Signup email error:', err);
+  }
+}
+
 export default transporter;
