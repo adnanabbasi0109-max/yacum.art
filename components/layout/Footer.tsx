@@ -8,7 +8,7 @@ export default function Footer() {
         {/* Gold separator */}
         <div className="h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent mb-12" />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* Brand */}
           <div>
             <div className="mb-4">
@@ -47,21 +47,6 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Contact */}
-          <div>
-            <h3 className="text-text-primary text-sm font-medium tracking-wider uppercase mb-4">
-              Contact
-            </h3>
-            <div className="flex flex-col gap-3">
-              <a
-                href="mailto:hello@yacum.art"
-                className="text-text-secondary hover:text-gold transition-colors text-sm"
-              >
-                hello@yacum.art
-              </a>
-              <p className="text-text-secondary text-sm">Yacum Studio</p>
-            </div>
-          </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-border-subtle flex flex-col md:flex-row justify-between items-center gap-4">
