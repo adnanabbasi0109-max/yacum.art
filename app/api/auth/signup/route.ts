@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { after } from "next/server";
 import bcrypt from "bcryptjs";
 import connectToDatabase from "@/lib/db";
 import User from "@/models/User";
@@ -47,12 +48,14 @@ export async function POST(request: NextRequest) {
       name: user.name,
     });
 
-    // Notify admin about new signup
-    sendNewUserNotification({
-      name: user.name,
-      email: user.email,
-      createdAt: user.createdAt || new Date(),
-    }).catch((err) => console.error('Signup email error:', err));
+    // Notify admin about new signup (runs after response is sent)
+    after(async () => {
+      await sendNewUserNotification({
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt || new Date(),
+      }).catch((err) => console.error('Signup email error:', err));
+    });
 
     const response = NextResponse.json({
       user: { id: user._id, email: user.email, name: user.name },

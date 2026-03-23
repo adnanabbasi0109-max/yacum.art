@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import crypto from 'crypto';
 import { randomUUID } from 'crypto';
 import connectToDatabase from '@/lib/db';
@@ -40,9 +40,9 @@ export async function POST(request: NextRequest) {
       { new: true }
     );
 
-    // Send order notification emails (admin + customer)
+    // Send order notification emails (runs after response is sent)
     if (order) {
-      sendOrderNotification({
+      const orderData = {
         orderNumber: order.orderNumber,
         customerName: order.name,
         customerEmail: order.email,
@@ -55,7 +55,10 @@ export async function POST(request: NextRequest) {
         })),
         total: order.total,
         shippingAddress: order.shippingAddress || undefined,
-      }).catch((err) => console.error('Email error:', err));
+      };
+      after(async () => {
+        await sendOrderNotification(orderData).catch((err) => console.error('Email error:', err));
+      });
     }
 
     return NextResponse.json({ success: true, orderNumber, downloadToken });
