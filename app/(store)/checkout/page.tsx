@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -34,6 +34,30 @@ export default function CheckoutPage() {
   });
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
+  const [authChecked, setAuthChecked] = useState(false);
+
+  // Require login to checkout
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (res.ok) {
+          const data = await res.json();
+          setForm((prev) => ({
+            ...prev,
+            email: data.user.email || "",
+            name: data.user.name || "",
+          }));
+          setAuthChecked(true);
+        } else {
+          router.push("/account?redirect=checkout");
+        }
+      } catch {
+        router.push("/account?redirect=checkout");
+      }
+    }
+    checkAuth();
+  }, [router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -141,6 +165,17 @@ export default function CheckoutPage() {
       setProcessing(false);
     }
   };
+
+  if (!authChecked) {
+    return (
+      <>
+        <Navbar />
+        <main className="min-h-screen bg-bg-primary pt-24 pb-24 flex items-center justify-center">
+          <div className="w-6 h-6 border-2 border-gold border-t-transparent rounded-full animate-spin" />
+        </main>
+      </>
+    );
+  }
 
   return (
     <>

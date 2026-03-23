@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
@@ -153,6 +154,9 @@ const tabs = ["Orders", "Downloads", "Bid History"] as const;
 type Tab = (typeof tabs)[number];
 
 export default function AccountPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect");
   const [user, setUser] = useState<User | null>(null);
   const [checking, setChecking] = useState(true);
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -162,11 +166,19 @@ export default function AccountPage() {
     fetch("/api/auth/me")
       .then((r) => r.json())
       .then((data) => {
-        if (data.user) setUser(data.user);
+        if (data.user) {
+          setUser(data.user);
+          if (redirectTo) router.push(`/${redirectTo}`);
+        }
       })
       .catch(() => {})
       .finally(() => setChecking(false));
-  }, []);
+  }, [redirectTo, router]);
+
+  const handleAuthSuccess = (u: User) => {
+    setUser(u);
+    if (redirectTo) router.push(`/${redirectTo}`);
+  };
 
   const handleSignOut = async () => {
     await fetch("/api/auth/signout", { method: "POST" });
@@ -190,6 +202,11 @@ export default function AccountPage() {
               </h1>
               <div className="max-w-md mx-auto space-y-8">
                 <div className="text-center">
+                  {redirectTo && (
+                    <p className="text-gold text-sm mb-2">
+                      Please sign in to continue to checkout
+                    </p>
+                  )}
                   <p className="text-text-secondary text-sm">
                     {mode === "signin"
                       ? "Sign in to place bids, track orders, and access your downloads"
@@ -198,9 +215,9 @@ export default function AccountPage() {
                 </div>
 
                 {mode === "signin" ? (
-                  <SignInForm onSuccess={setUser} />
+                  <SignInForm onSuccess={handleAuthSuccess} />
                 ) : (
-                  <SignUpForm onSuccess={setUser} />
+                  <SignUpForm onSuccess={handleAuthSuccess} />
                 )}
 
                 <div className="text-center">
