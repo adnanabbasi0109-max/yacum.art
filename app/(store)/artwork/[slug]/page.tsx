@@ -184,27 +184,6 @@ export default function ArtworkDetailPage() {
             {/* Gold divider */}
             <div className="h-px bg-gold/20 mb-6" />
 
-            {/* Description */}
-            {artwork.description && (
-              <>
-                <div className="mb-6">
-                  <h3 className="text-text-secondary text-xs tracking-widest uppercase mb-3">
-                    About This Piece
-                  </h3>
-                  <p className="text-text-secondary text-sm leading-relaxed">
-                    {artwork.description}
-                  </p>
-                </div>
-                <div className="h-px bg-gold/20 mb-6" />
-              </>
-            )}
-
-            {/* QR Code */}
-            <div className="mb-6">
-              <QRCodeBadge verseId={artwork.verseId} slug={artwork.slug} variant="panel" />
-            </div>
-            <div className="h-px bg-gold/20 mb-6" />
-
             {/* Purchase section */}
             <div className="mb-6">
               {/* Tabs */}
