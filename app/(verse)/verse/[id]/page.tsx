@@ -94,13 +94,6 @@ export default function VersePage() {
   }
 
   return (
-    <>
-      <head>
-        <title>
-          {verse.surah} {verse.surahNumber}:{verse.ayah} — Yacum Art
-        </title>
-      </head>
-
       <main className="min-h-screen bg-[#0A0A0A]">
         <motion.div
           className="max-w-lg mx-auto px-6 py-12 space-y-10"
@@ -218,6 +211,5 @@ export default function VersePage() {
           </motion.div>
         </motion.div>
       </main>
-    </>
   );
 }
