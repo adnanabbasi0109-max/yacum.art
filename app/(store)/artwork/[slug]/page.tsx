@@ -129,7 +129,7 @@ export default function ArtworkDetailPage() {
                 sizes="(max-width: 1024px) 100vw, 60vw"
                 priority
               />
-              <QRCodeBadge verseId={artwork.verseId} variant="overlay" />
+              <QRCodeBadge verseId={artwork.verseId} slug={artwork.slug} variant="overlay" />
             </div>
 
             {/* Print size thumbnails */}
@@ -198,6 +198,12 @@ export default function ArtworkDetailPage() {
                 <div className="h-px bg-gold/20 mb-6" />
               </>
             )}
+
+            {/* QR Code */}
+            <div className="mb-6">
+              <QRCodeBadge verseId={artwork.verseId} slug={artwork.slug} variant="panel" />
+            </div>
+            <div className="h-px bg-gold/20 mb-6" />
 
             {/* Purchase section */}
             <div className="mb-6">
