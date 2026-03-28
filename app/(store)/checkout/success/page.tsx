@@ -13,6 +13,16 @@ interface DownloadItem {
   slug: string;
 }
 
+function triggerDownload(url: string, filename: string) {
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
 function SuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -23,9 +33,9 @@ function SuccessContent() {
   const [downloads, setDownloads] = useState<DownloadItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [autoDownloaded, setAutoDownloaded] = useState(false);
 
   useEffect(() => {
-    // Clear cart on success
     clearCart();
 
     if (!orderNumber || !downloadToken) {
@@ -34,7 +44,6 @@ function SuccessContent() {
       return;
     }
 
-    // Fetch order info to get the list of digital items
     fetch(`/api/orders/${orderNumber}?token=${downloadToken}`)
       .then((res) => {
         if (!res.ok) throw new Error("Order not found or payment pending");
@@ -48,6 +57,21 @@ function SuccessContent() {
       })
       .finally(() => setLoading(false));
   }, [orderNumber, downloadToken, clearCart]);
+
+  // Auto-download all files without popup
+  useEffect(() => {
+    if (downloads.length > 0 && downloadToken && !autoDownloaded) {
+      setAutoDownloaded(true);
+      downloads.forEach((item, i) => {
+        setTimeout(() => {
+          triggerDownload(
+            `/api/download/${downloadToken}?slug=${item.slug}`,
+            `${item.slug}.png`
+          );
+        }, i * 800);
+      });
+    }
+  }, [downloads, downloadToken, autoDownloaded]);
 
   return (
     <main className="min-h-screen bg-bg-primary pt-24 pb-24">
@@ -100,11 +124,8 @@ function SuccessContent() {
             <h1 className="font-[family-name:var(--font-display)] text-3xl text-text-primary mb-3 italic">
               Payment Successful
             </h1>
-            <p className="text-text-secondary mb-2">
-              Order #{orderNumber}
-            </p>
             <p className="text-text-secondary text-sm mb-8">
-              Thank you for your purchase. Your digital downloads are ready.
+              Thank you for your purchase. Your downloads should start automatically.
             </p>
 
             {/* Download links */}
