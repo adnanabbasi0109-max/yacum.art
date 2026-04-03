@@ -9,7 +9,7 @@ import Footer from "@/components/layout/Footer";
 import CustomCursor from "@/components/layout/CustomCursor";
 import ProtectedImage from "@/components/artwork/ProtectedImage";
 import ScrollProgress from "@/components/layout/ScrollProgress";
-import QRCodeBadge from "@/components/artwork/QRCodeBadge";
+
 import { useCartStore } from "@/store/cartStore";
 import { useUiStore } from "@/store/uiStore";
 import FrameSelector from "@/components/artwork/FrameSelector";
@@ -129,7 +129,7 @@ export default function ArtworkDetailPage() {
                 sizes="(max-width: 1024px) 100vw, 60vw"
                 priority
               />
-              <QRCodeBadge verseId={artwork.verseId} slug={artwork.slug} variant="overlay" />
+
             </div>
 
             {/* Print size thumbnails */}
