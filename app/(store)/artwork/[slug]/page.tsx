@@ -304,6 +304,7 @@ export default function ArtworkDetailPage() {
                     selected={selectedFrame}
                     onSelect={setSelectedFrame}
                     basePrice={printPrice}
+                    orientation={artwork.orientation || "vertical"}
                   />
                 </motion.div>
               )}

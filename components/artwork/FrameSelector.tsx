@@ -24,9 +24,11 @@ interface FrameSelectorProps {
   selected: string;
   onSelect: (frame: string) => void;
   basePrice: number;
+  orientation?: "vertical" | "horizontal";
 }
 
-export default function FrameSelector({ selected, onSelect }: FrameSelectorProps) {
+export default function FrameSelector({ selected, onSelect, orientation = "vertical" }: FrameSelectorProps) {
+  const isHorizontal = orientation === "horizontal";
   return (
     <div className="space-y-3">
       <h4 className="text-text-secondary text-xs tracking-widest uppercase">
@@ -53,13 +55,13 @@ export default function FrameSelector({ selected, onSelect }: FrameSelectorProps
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
               )}
-              {/* Vertical frame preview thumbnail */}
+              {/* Frame preview thumbnail */}
               <div className="relative">
                 {frame.id === "none" ? (
-                  <div className="w-8 h-11 bg-bg-secondary/50 border border-border-subtle" />
+                  <div className={`${isHorizontal ? "w-14 h-8" : "w-8 h-11"} bg-bg-secondary/50 border border-border-subtle`} />
                 ) : (
                   <div
-                    className="w-10 h-14 flex items-center justify-center"
+                    className={`${isHorizontal ? "w-16 h-10" : "w-10 h-14"} flex items-center justify-center`}
                     style={{
                       border: `${frame.borderWidth}px solid ${frame.borderColor}`,
                       boxShadow: frame.innerBorderColor
