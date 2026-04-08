@@ -147,7 +147,7 @@ export default function ArtworkDetailPage() {
                     <div
                       className={`relative ${
                         isHorizontal
-                          ? "aspect-[4/3] w-[340px] sm:w-[440px] lg:w-[540px]"
+                          ? "aspect-[16/9] w-[340px] sm:w-[480px] lg:w-[600px]"
                           : "aspect-[3/4] w-[280px] sm:w-[340px] lg:w-[420px]"
                       }`}
                     >
