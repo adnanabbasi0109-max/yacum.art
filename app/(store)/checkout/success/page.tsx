@@ -66,7 +66,7 @@ function SuccessContent() {
         setTimeout(() => {
           triggerDownload(
             `/api/download/${downloadToken}?slug=${item.slug}`,
-            `${item.slug}.png`
+            `${item.slug}.pdf`
           );
         }, i * 800);
       });

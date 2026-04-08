@@ -4,8 +4,9 @@ import path from 'path';
 import connectToDatabase from '@/lib/db';
 import Order from '@/models/Order';
 
-// Map artwork slugs to filenames in public/downloads/
+// Map artwork slugs to download filenames in public/downloads/
 const slugToFile: Record<string, string> = {
+  // Old 8
   'sibghatallah-take-on-allahs-colour': 'sibghatallah',
   'thornless-lote-trees-sidrin-makhdud': 'thornless-lote-trees',
   'divine-precision-sunflower': 'sunflower-closeup',
@@ -14,6 +15,15 @@ const slugToFile: Record<string, string> = {
   'honeycomb-flawless-design': 'honeycomb',
   'mountains-raised-in-measure': 'mountains',
   'birds-in-flight-divine-mercy': 'birds-in-flight',
+  // New 8
+  'water-droplet-divine-precision': 'water-droplet-divine-precision',
+  'tree-rings-divine-precision': 'tree-rings-divine-precision',
+  'luminous-niche-light-verse': 'luminous-niche-light-verse',
+  'seashell-determined-measure': 'seashell-determined-measure',
+  'feather-determined-measure': 'feather-determined-measure',
+  'nautilus-determined-measure': 'nautilus-determined-measure',
+  'pinecone-determined-measure': 'pinecone-determined-measure',
+  'flower-bud-determined-measure': 'flower-bud-determined-measure',
 };
 
 export async function GET(
@@ -29,7 +39,6 @@ export async function GET(
       return NextResponse.json({ error: 'Missing slug parameter' }, { status: 400 });
     }
 
-    // Look up order by downloadToken
     const order = await Order.findOne({ downloadToken: token }).lean();
 
     if (!order) {
@@ -40,7 +49,6 @@ export async function GET(
       return NextResponse.json({ error: 'Payment not completed' }, { status: 403 });
     }
 
-    // Verify that this slug is part of the order's digital items
     const digitalItem = order.items.find(
       (item: { slug: string; type: string }) =>
         item.slug === slug && item.type === 'digital'
@@ -53,9 +61,9 @@ export async function GET(
       );
     }
 
-    // Resolve the filename
+    // Serve PDF files
     const baseName = slugToFile[slug] || slug;
-    const filename = `${baseName}.png`;
+    const filename = `${baseName}.pdf`;
     const filePath = path.join(process.cwd(), 'public', 'downloads', filename);
 
     try {
@@ -63,7 +71,7 @@ export async function GET(
 
       return new NextResponse(fileBuffer, {
         headers: {
-          'Content-Type': 'image/png',
+          'Content-Type': 'application/pdf',
           'Content-Disposition': `attachment; filename="${filename}"`,
           'Content-Length': fileBuffer.length.toString(),
         },
