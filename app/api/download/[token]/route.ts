@@ -24,6 +24,12 @@ const slugToFile: Record<string, string> = {
   'nautilus-determined-measure': 'nautilus-determined-measure',
   'pinecone-determined-measure': 'pinecone-determined-measure',
   'flower-bud-determined-measure': 'flower-bud-determined-measure',
+  // Horizontal 5
+  'ocean-reflection-words-of-allah': 'ocean-reflection-words-of-allah',
+  'piercing-star-night-sky': 'piercing-star-night-sky',
+  'expanding-universe': 'expanding-universe',
+  'rocky-coastline-vision': 'rocky-coastline-vision',
+  'clouds-lightning-divine': 'clouds-lightning-divine',
 };
 
 export async function GET(

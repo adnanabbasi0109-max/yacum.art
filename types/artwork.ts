@@ -25,6 +25,7 @@ export interface Artwork {
   printPriceBase: number;
   printSizes: PrintSize[];
   frameOptions: FrameOption[];
+  orientation?: "vertical" | "horizontal";
   status: "draft" | "published" | "soldout";
   isAuctionPiece: boolean;
   isFeatured: boolean;

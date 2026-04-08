@@ -124,6 +124,7 @@ export default function ArtworkDetailPage() {
             {(() => {
               const frame = frameOptions.find((f) => f.id === selectedFrame);
               const showFrame = purchaseTab === "print" && frame && frame.id !== "none";
+              const isHorizontal = artwork.orientation === "horizontal";
               return (
                 <div
                   className="flex items-center justify-center bg-[#1a1a1a] p-6 lg:p-10 min-h-[400px]"
@@ -143,7 +144,13 @@ export default function ArtworkDetailPage() {
                         : { boxShadow: "0 4px 20px rgba(0,0,0,0.3)" }
                     }
                   >
-                    <div className="aspect-[3/4] relative w-[280px] sm:w-[340px] lg:w-[420px]">
+                    <div
+                      className={`relative ${
+                        isHorizontal
+                          ? "aspect-[4/3] w-[340px] sm:w-[440px] lg:w-[540px]"
+                          : "aspect-[3/4] w-[280px] sm:w-[340px] lg:w-[420px]"
+                      }`}
+                    >
                       <ProtectedImage
                         src={artwork.previewImageUrl}
                         alt={artwork.translation}

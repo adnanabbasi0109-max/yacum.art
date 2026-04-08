@@ -32,6 +32,7 @@ export interface IArtwork extends Document {
   printSizes: IPrintSize[];
   frameOptions: IFrameOption[];
   status: 'draft' | 'published' | 'soldout';
+  orientation?: 'vertical' | 'horizontal';
   description?: string;
   isAuctionPiece: boolean;
   isFeatured: boolean;
@@ -82,6 +83,7 @@ const ArtworkSchema = new Schema<IArtwork>(
       enum: ['draft', 'published', 'soldout'],
       default: 'published',
     },
+    orientation: { type: String, enum: ['vertical', 'horizontal'], default: 'vertical' },
     description: { type: String },
     isAuctionPiece: { type: Boolean, default: false },
     isFeatured: { type: Boolean, default: false },
