@@ -8,19 +8,42 @@ import ArtworkCard from "@/components/artwork/ArtworkCard";
 
 export default function FeaturedCollection() {
   const [featured, setFeatured] = useState<Artwork[]>([]);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     fetch("/api/artworks")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`API error: ${res.status}`);
+        return res.json();
+      })
       .then((data) => {
         if (Array.isArray(data)) {
-          setFeatured(data.filter((a: Artwork) => a.isFeatured).slice(0, 6));
+          const feat = data.filter((a: Artwork) => a.isFeatured).slice(0, 6);
+          setFeatured(feat);
         }
       })
-      .catch(console.error);
+      .catch((err) => console.error("Featured fetch error:", err))
+      .finally(() => setLoaded(true));
   }, []);
 
-  if (featured.length === 0) return null;
+  if (!loaded || featured.length === 0) {
+    if (loaded && featured.length === 0) return null;
+    // Show placeholder while loading
+    return (
+      <section className="py-24 bg-bg-primary">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="h-8 w-48 bg-bg-secondary/30 animate-pulse mb-12" />
+          <div className="flex gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="w-[320px] flex-shrink-0">
+                <div className="bg-bg-secondary/20 aspect-[3/4] animate-pulse" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-24 bg-bg-primary">
