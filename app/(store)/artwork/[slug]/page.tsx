@@ -61,6 +61,7 @@ export default function ArtworkDetailPage() {
   const [purchaseTab, setPurchaseTab] = useState<"digital" | "print">("digital");
   const [selectedSize, setSelectedSize] = useState("A3");
   const [selectedFrame, setSelectedFrame] = useState("none");
+  const [wallColor, setWallColor] = useState<"light" | "dark">("light");
   const [addedToCart, setAddedToCart] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
   const setCartOpen = useUiStore((s) => s.setCartOpen);
@@ -124,50 +125,109 @@ export default function ArtworkDetailPage() {
             {(() => {
               const frame = frameOptions.find((f) => f.id === selectedFrame);
               const showFrame = purchaseTab === "print" && frame && frame.id !== "none";
+              const isPrintTab = purchaseTab === "print";
               const isHorizontal = artwork.orientation === "horizontal";
-              return showFrame ? (
-                <div className="flex items-center justify-center bg-[#1a1a1a] p-6 lg:p-10">
+
+              const wallStyles = {
+                light: {
+                  bg: "bg-[#E8E0D4]",
+                  texture: "bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGRlZnM+PGZpbHRlciBpZD0ibiI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNyIgbnVtT2N0YXZlcz0iMyIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjwvZGVmcz48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbHRlcj0idXJsKCNuKSIgb3BhY2l0eT0iMC4wOCIvPjwvc3ZnPg==')]",
+                  shadow: "0 6px 30px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.15)",
+                },
+                dark: {
+                  bg: "bg-[#2A2A2A]",
+                  texture: "bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGRlZnM+PGZpbHRlciBpZD0ibiI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNyIgbnVtT2N0YXZlcz0iMyIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjwvZGVmcz48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbHRlcj0idXJsKCNuKSIgb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')]",
+                  shadow: "0 6px 30px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)",
+                },
+              };
+
+              const wall = wallStyles[wallColor];
+
+              // Digital tab — full bleed artwork
+              if (!isPrintTab) {
+                return (
                   <div
-                    className="relative transition-all duration-500 ease-out w-full"
-                    style={{
-                      border: `${frame!.borderWidth * 3}px solid ${frame!.borderColor}`,
-                      boxShadow: frame!.innerBorderColor
-                        ? `inset 0 0 0 2px ${frame!.innerBorderColor}, 0 8px 32px rgba(0,0,0,0.5)`
-                        : "0 8px 32px rgba(0,0,0,0.5)",
-                      padding: frame!.id === "floating-white" ? "12px" : "0",
-                      background: frame!.id === "floating-white" ? "#F5F0E8" : undefined,
-                    }}
+                    className={`relative w-full ${
+                      isHorizontal ? "aspect-[16/9]" : "aspect-[3/4]"
+                    }`}
+                  >
+                    <ProtectedImage
+                      src={artwork.previewImageUrl}
+                      alt={artwork.translation}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 60vw"
+                      priority
+                    />
+                  </div>
+                );
+              }
+
+              // Print tab — wall mockup
+              return (
+                <div className={`relative ${wall.bg} ${wall.texture} transition-colors duration-500`}>
+                  {/* Wall color toggle */}
+                  <div className="absolute top-4 right-4 z-10 flex gap-2">
+                    <button
+                      onClick={() => setWallColor("light")}
+                      className={`w-7 h-7 rounded-full border-2 transition-all ${
+                        wallColor === "light"
+                          ? "border-gold scale-110"
+                          : "border-transparent opacity-70 hover:opacity-100"
+                      }`}
+                      style={{ background: "#E8E0D4" }}
+                      title="Light wall"
+                    />
+                    <button
+                      onClick={() => setWallColor("dark")}
+                      className={`w-7 h-7 rounded-full border-2 transition-all ${
+                        wallColor === "dark"
+                          ? "border-gold scale-110"
+                          : "border-transparent opacity-70 hover:opacity-100"
+                      }`}
+                      style={{ background: "#2A2A2A" }}
+                      title="Dark wall"
+                    />
+                  </div>
+
+                  <div
+                    className={`flex items-center justify-center ${
+                      isHorizontal ? "py-12 px-8 lg:py-16 lg:px-16" : "py-10 px-12 lg:py-14 lg:px-20"
+                    }`}
                   >
                     <div
-                      className={`relative w-full ${
-                        isHorizontal ? "aspect-[16/9]" : "aspect-[3/4]"
+                      className={`relative transition-all duration-500 ease-out ${
+                        isHorizontal ? "w-[85%]" : "w-[55%] sm:w-[50%] lg:w-[45%]"
                       }`}
+                      style={{
+                        boxShadow: showFrame ? wall.shadow : wall.shadow,
+                        border: showFrame
+                          ? `${frame!.borderWidth * 3}px solid ${frame!.borderColor}`
+                          : "none",
+                        ...(showFrame && frame!.innerBorderColor
+                          ? { outline: `2px solid ${frame!.innerBorderColor}`, outlineOffset: "-4px" }
+                          : {}),
+                        ...(showFrame && frame!.id === "floating-white"
+                          ? { padding: "10px", background: "#F5F0E8" }
+                          : {}),
+                      }}
                     >
-                      <ProtectedImage
-                        src={artwork.previewImageUrl}
-                        alt={artwork.translation}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 1024px) 100vw, 60vw"
-                        priority
-                      />
+                      <div
+                        className={`relative w-full ${
+                          isHorizontal ? "aspect-[16/9]" : "aspect-[3/4]"
+                        }`}
+                      >
+                        <ProtectedImage
+                          src={artwork.previewImageUrl}
+                          alt={artwork.translation}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 1024px) 100vw, 60vw"
+                          priority
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                <div
-                  className={`relative w-full ${
-                    isHorizontal ? "aspect-[16/9]" : "aspect-[3/4]"
-                  }`}
-                >
-                  <ProtectedImage
-                    src={artwork.previewImageUrl}
-                    alt={artwork.translation}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 60vw"
-                    priority
-                  />
                 </div>
               );
             })()}
