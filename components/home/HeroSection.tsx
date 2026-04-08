@@ -65,7 +65,7 @@ export default function HeroSection() {
 
       <div className="relative z-10 text-center px-6 max-w-3xl">
         <motion.h1
-          className="font-[family-name:var(--font-display)] text-4xl sm:text-5xl md:text-7xl font-semibold text-text-primary leading-tight tracking-[-0.02em]"
+          className="font-[family-name:var(--font-display)] text-4xl sm:text-5xl md:text-7xl font-semibold italic text-text-primary leading-tight tracking-[-0.02em]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
