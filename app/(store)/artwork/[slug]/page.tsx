@@ -127,10 +127,14 @@ export default function ArtworkDetailPage() {
               const isHorizontal = artwork.orientation === "horizontal";
               return (
                 <div
-                  className="flex items-center justify-center bg-[#1a1a1a] p-6 lg:p-10 min-h-[400px]"
+                  className={`flex items-center justify-center bg-[#1a1a1a] ${
+                    isHorizontal ? "p-0" : "p-6 lg:p-10"
+                  } min-h-[300px]`}
                 >
                   <div
-                    className="relative transition-all duration-500 ease-out"
+                    className={`relative transition-all duration-500 ease-out ${
+                      isHorizontal ? "w-full" : ""
+                    }`}
                     style={
                       showFrame
                         ? {
@@ -140,14 +144,17 @@ export default function ArtworkDetailPage() {
                               : "0 8px 32px rgba(0,0,0,0.5)",
                             padding: frame!.id === "floating-white" ? "12px" : "0",
                             background: frame!.id === "floating-white" ? "#F5F0E8" : undefined,
+                            margin: isHorizontal ? "24px" : undefined,
                           }
+                        : isHorizontal
+                        ? {}
                         : { boxShadow: "0 4px 20px rgba(0,0,0,0.3)" }
                     }
                   >
                     <div
                       className={`relative ${
                         isHorizontal
-                          ? "aspect-[16/9] w-[340px] sm:w-[480px] lg:w-[600px]"
+                          ? "aspect-[16/9] w-full"
                           : "aspect-[3/4] w-[280px] sm:w-[340px] lg:w-[420px]"
                       }`}
                     >
