@@ -13,7 +13,7 @@ export default function GalleryContent() {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          setArtworks(data);
+          setArtworks(data.filter((a: Artwork) => !a.isAuctionPiece));
         }
       })
       .catch(console.error)
