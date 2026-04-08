@@ -113,7 +113,7 @@ export default function ArtworkDetailPage() {
       <Navbar />
 
       <main className="min-h-screen pt-20">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-0 lg:gap-8 max-w-[1400px] mx-auto px-4 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-0 lg:gap-8 max-w-[1400px] mx-auto px-0 lg:px-8">
           {/* Left column - Artwork image (60%) */}
           <motion.div
             className="lg:col-span-3"
@@ -147,7 +147,7 @@ export default function ArtworkDetailPage() {
               if (!isPrintTab) {
                 return (
                   <div
-                    className={`relative w-full ${
+                    className={`relative w-full overflow-hidden bg-[#0a0a0a] ${
                       isHorizontal ? "aspect-[16/9]" : "aspect-[3/4]"
                     }`}
                   >
@@ -156,7 +156,7 @@ export default function ArtworkDetailPage() {
                       alt={artwork.translation}
                       fill
                       className="object-cover"
-                      sizes="(max-width: 1024px) 100vw, 60vw"
+                      sizes="100vw"
                       priority
                     />
                   </div>
@@ -235,7 +235,7 @@ export default function ArtworkDetailPage() {
 
           {/* Right column - Details (40%) */}
           <motion.div
-            className="lg:col-span-2 lg:max-h-screen lg:overflow-y-auto py-8 lg:py-0 lg:pr-2"
+            className="lg:col-span-2 lg:max-h-screen lg:overflow-y-auto py-8 px-4 lg:px-0 lg:py-0 lg:pr-2"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
