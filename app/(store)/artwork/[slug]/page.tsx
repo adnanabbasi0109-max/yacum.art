@@ -12,7 +12,7 @@ import ScrollProgress from "@/components/layout/ScrollProgress";
 
 import { useCartStore } from "@/store/cartStore";
 import { useUiStore } from "@/store/uiStore";
-import FrameSelector from "@/components/artwork/FrameSelector";
+import FrameSelector, { frameOptions } from "@/components/artwork/FrameSelector";
 
 function formatVerseRef(verseId: string): string {
   const parts = verseId.split('-');
@@ -60,7 +60,7 @@ export default function ArtworkDetailPage() {
   const [loading, setLoading] = useState(true);
   const [purchaseTab, setPurchaseTab] = useState<"digital" | "print">("digital");
   const [selectedSize, setSelectedSize] = useState("A3");
-  const [selectedFrame, setSelectedFrame] = useState("thin-black");
+  const [selectedFrame, setSelectedFrame] = useState("none");
   const [addedToCart, setAddedToCart] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
   const setCartOpen = useUiStore((s) => s.setCartOpen);
@@ -120,34 +120,43 @@ export default function ArtworkDetailPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            <div className="aspect-[3/4] relative bg-bg-secondary">
-              <ProtectedImage
-                src={artwork.previewImageUrl}
-                alt={artwork.translation}
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 60vw"
-                priority
-              />
-
-            </div>
-
-            {/* Print size thumbnails */}
-            <div className="flex gap-3 mt-4">
-              {printSizes.map((size) => (
-                <button
-                  key={size.label}
-                  onClick={() => setSelectedSize(size.label)}
-                  className={`px-3 py-2 text-xs font-[family-name:var(--font-mono)] tracking-wider border transition-colors duration-200 ${
-                    selectedSize === size.label
-                      ? "border-gold text-gold"
-                      : "border-border-subtle text-text-secondary hover:border-white/10"
-                  }`}
+            {/* Artwork with frame preview */}
+            {(() => {
+              const frame = frameOptions.find((f) => f.id === selectedFrame);
+              const showFrame = purchaseTab === "print" && frame && frame.id !== "none";
+              return (
+                <div
+                  className="flex items-center justify-center bg-[#1a1a1a] p-6 lg:p-10 min-h-[400px]"
                 >
-                  {size.label}
-                </button>
-              ))}
-            </div>
+                  <div
+                    className="relative transition-all duration-500 ease-out"
+                    style={
+                      showFrame
+                        ? {
+                            border: `${frame!.borderWidth * 3}px solid ${frame!.borderColor}`,
+                            boxShadow: frame!.innerBorderColor
+                              ? `inset 0 0 0 2px ${frame!.innerBorderColor}, 0 8px 32px rgba(0,0,0,0.5)`
+                              : "0 8px 32px rgba(0,0,0,0.5)",
+                            padding: frame!.id === "floating-white" ? "12px" : "0",
+                            background: frame!.id === "floating-white" ? "#F5F0E8" : undefined,
+                          }
+                        : { boxShadow: "0 4px 20px rgba(0,0,0,0.3)" }
+                    }
+                  >
+                    <div className="aspect-[3/4] relative w-[280px] sm:w-[340px] lg:w-[420px]">
+                      <ProtectedImage
+                        src={artwork.previewImageUrl}
+                        alt={artwork.translation}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 1024px) 100vw, 60vw"
+                        priority
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </motion.div>
 
           {/* Right column - Details (40%) */}
