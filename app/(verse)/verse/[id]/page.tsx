@@ -57,25 +57,27 @@ export default function VersePage() {
     if (params.id) fetchVerse();
   }, [params.id]);
 
+  const artworkUrl = verse ? `https://yacum.art/artwork/${verse.slug}` : window.location.href;
+
   const handleCopyUrl = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      await navigator.clipboard.writeText(artworkUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
       // Fallback
     }
-  }, []);
+  }, [artworkUrl]);
 
   const handleWhatsAppShare = useCallback(() => {
     const text = verse
-      ? `${verse.translation} — ${verse.surah} ${verse.surahNumber}:${verse.ayah}\n\n${window.location.href}`
-      : window.location.href;
+      ? `${verse.title} — ${verse.surah} ${verse.surahNumber}:${verse.ayah}\n\n${artworkUrl}`
+      : artworkUrl;
     window.open(
       `https://wa.me/?text=${encodeURIComponent(text)}`,
       "_blank"
     );
-  }, [verse]);
+  }, [verse, artworkUrl]);
 
   if (loading) {
     return (
