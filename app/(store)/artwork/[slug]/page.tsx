@@ -125,37 +125,22 @@ export default function ArtworkDetailPage() {
               const frame = frameOptions.find((f) => f.id === selectedFrame);
               const showFrame = purchaseTab === "print" && frame && frame.id !== "none";
               const isHorizontal = artwork.orientation === "horizontal";
-              return (
-                <div
-                  className={`flex items-center justify-center bg-[#1a1a1a] ${
-                    isHorizontal ? "p-0" : "p-6 lg:p-10"
-                  } min-h-[300px]`}
-                >
+              return showFrame ? (
+                <div className="flex items-center justify-center bg-[#1a1a1a] p-6 lg:p-10">
                   <div
-                    className={`relative transition-all duration-500 ease-out ${
-                      isHorizontal ? "w-full" : ""
-                    }`}
-                    style={
-                      showFrame
-                        ? {
-                            border: `${frame!.borderWidth * 3}px solid ${frame!.borderColor}`,
-                            boxShadow: frame!.innerBorderColor
-                              ? `inset 0 0 0 2px ${frame!.innerBorderColor}, 0 8px 32px rgba(0,0,0,0.5)`
-                              : "0 8px 32px rgba(0,0,0,0.5)",
-                            padding: frame!.id === "floating-white" ? "12px" : "0",
-                            background: frame!.id === "floating-white" ? "#F5F0E8" : undefined,
-                            margin: isHorizontal ? "24px" : undefined,
-                          }
-                        : isHorizontal
-                        ? {}
-                        : { boxShadow: "0 4px 20px rgba(0,0,0,0.3)" }
-                    }
+                    className="relative transition-all duration-500 ease-out w-full"
+                    style={{
+                      border: `${frame!.borderWidth * 3}px solid ${frame!.borderColor}`,
+                      boxShadow: frame!.innerBorderColor
+                        ? `inset 0 0 0 2px ${frame!.innerBorderColor}, 0 8px 32px rgba(0,0,0,0.5)`
+                        : "0 8px 32px rgba(0,0,0,0.5)",
+                      padding: frame!.id === "floating-white" ? "12px" : "0",
+                      background: frame!.id === "floating-white" ? "#F5F0E8" : undefined,
+                    }}
                   >
                     <div
-                      className={`relative ${
-                        isHorizontal
-                          ? "aspect-[16/9] w-full"
-                          : "aspect-[3/4] w-[280px] sm:w-[340px] lg:w-[420px]"
+                      className={`relative w-full ${
+                        isHorizontal ? "aspect-[16/9]" : "aspect-[3/4]"
                       }`}
                     >
                       <ProtectedImage
@@ -168,6 +153,21 @@ export default function ArtworkDetailPage() {
                       />
                     </div>
                   </div>
+                </div>
+              ) : (
+                <div
+                  className={`relative w-full ${
+                    isHorizontal ? "aspect-[16/9]" : "aspect-[3/4]"
+                  }`}
+                >
+                  <ProtectedImage
+                    src={artwork.previewImageUrl}
+                    alt={artwork.translation}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 60vw"
+                    priority
+                  />
                 </div>
               );
             })()}
