@@ -58,7 +58,7 @@ export default function ArtworkDetailPage() {
 
   const [artwork, setArtwork] = useState<Artwork | null>(null);
   const [loading, setLoading] = useState(true);
-  const [purchaseTab, setPurchaseTab] = useState<"digital" | "print">("digital");
+  const [purchaseTab, setPurchaseTab] = useState<"digital" | "print">("print");
   const [selectedSize, setSelectedSize] = useState("A3");
   const [selectedFrame, setSelectedFrame] = useState("none");
   const [wallColor, setWallColor] = useState<"light" | "dark">("light");
@@ -272,16 +272,6 @@ export default function ArtworkDetailPage() {
               {/* Tabs */}
               <div className="flex border-b border-border-subtle mb-6">
                 <button
-                  onClick={() => setPurchaseTab("digital")}
-                  className={`flex-1 pb-3 text-xs tracking-widest uppercase transition-colors duration-200 ${
-                    purchaseTab === "digital"
-                      ? "text-gold border-b-2 border-gold"
-                      : "text-text-secondary hover:text-text-primary"
-                  }`}
-                >
-                  Digital Download
-                </button>
-                <button
                   onClick={() => setPurchaseTab("print")}
                   className={`flex-1 pb-3 text-xs tracking-widest uppercase transition-colors duration-200 ${
                     purchaseTab === "print"
@@ -290,6 +280,16 @@ export default function ArtworkDetailPage() {
                   }`}
                 >
                   Printed &amp; Framed
+                </button>
+                <button
+                  onClick={() => setPurchaseTab("digital")}
+                  className={`flex-1 pb-3 text-xs tracking-widest uppercase transition-colors duration-200 ${
+                    purchaseTab === "digital"
+                      ? "text-gold border-b-2 border-gold"
+                      : "text-text-secondary hover:text-text-primary"
+                  }`}
+                >
+                  Digital Download
                 </button>
               </div>
 
