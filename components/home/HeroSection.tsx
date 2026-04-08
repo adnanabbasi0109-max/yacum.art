@@ -65,26 +65,26 @@ export default function HeroSection() {
 
       <div className="relative z-10 text-center px-6 max-w-3xl">
         <motion.h1
-          className="text-text-primary leading-none"
+          className="text-text-primary leading-tight"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
           <motion.span
-            className="block text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight lowercase"
+            className="block text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight lowercase"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            art that
+            art that carries
           </motion.span>
           <motion.span
-            className="block text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight lowercase"
+            className="block text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight lowercase"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            carries <span className="text-gold">weight<span className="text-gold">.</span></span>
+            the weight of <span className="text-gold">eternity.</span>
           </motion.span>
         </motion.h1>
 
