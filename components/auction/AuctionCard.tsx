@@ -85,8 +85,6 @@ export default function AuctionCard({
             </p>
           </div>
 
-          <CountdownTimer endTime={endTime} />
-
           <button className="mt-4 w-full py-2.5 bg-auction-red text-text-primary text-sm tracking-wider uppercase hover:bg-auction-red/80 transition-colors duration-300">
             Place Bid
           </button>

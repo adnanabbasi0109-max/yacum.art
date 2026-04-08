@@ -249,18 +249,6 @@ export default function SingleAuction() {
                 )}
               </div>
 
-              {/* Countdown */}
-              {(auction.status === "live" || auction.status === "upcoming") && (
-                <div>
-                  <p className="text-text-secondary text-xs uppercase tracking-wider mb-2">
-                    {auction.status === "upcoming"
-                      ? "Auction Starts In"
-                      : "Auction Ends In"}
-                  </p>
-                  <CountdownTimer endTime={auction.endTime} />
-                </div>
-              )}
-
               <div className="h-px bg-gold/20" />
 
               {/* Bid Form - only show for live auctions */}
