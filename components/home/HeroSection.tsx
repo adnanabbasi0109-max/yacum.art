@@ -65,38 +65,36 @@ export default function HeroSection() {
 
       <div className="relative z-10 text-center px-6 max-w-3xl">
         <motion.h1
-          className="font-[family-name:var(--font-display)] text-4xl sm:text-5xl md:text-7xl font-light italic text-text-primary leading-tight"
+          className="text-text-primary leading-none"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
           <motion.span
-            className="block"
-            initial={{ opacity: 0, y: 24 }}
+            className="block text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight lowercase"
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            Art that carries
+            art that
           </motion.span>
           <motion.span
-            className="block"
-            initial={{ opacity: 0, y: 24 }}
+            className="block text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight lowercase"
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            the weight of{" "}
-            <span className="text-gold">eternity.</span>
+            carries <span className="text-gold">weight<span className="text-gold">.</span></span>
           </motion.span>
         </motion.h1>
 
         <motion.p
-          className="mt-6 text-text-secondary text-base md:text-lg max-w-xl mx-auto"
+          className="mt-8 text-text-secondary text-sm md:text-base tracking-wide max-w-md mx-auto uppercase"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
-          Premium digital paintings themed on Quranic verses. Each piece embeds
-          a QR code linking to recitation and meaning.
+          Quranic verse paintings. scan. reflect. own.
         </motion.p>
 
         <motion.div
