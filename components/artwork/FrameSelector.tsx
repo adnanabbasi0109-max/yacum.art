@@ -12,7 +12,6 @@ export interface FrameOption {
 }
 
 export const frameOptions: FrameOption[] = [
-  { id: "none", name: "No Frame", borderColor: "transparent", borderWidth: 0, priceAddon: 0 },
   { id: "thin-black", name: "Thin Black", borderColor: "#1A1A1A", borderWidth: 3, priceAddon: 500 },
   { id: "dark-walnut", name: "Dark Walnut", borderColor: "#3E2723", borderWidth: 5, innerBorderColor: "#5D4037", priceAddon: 1200 },
   { id: "natural-wood", name: "Natural Oak", borderColor: "#8B6F47", borderWidth: 5, innerBorderColor: "#A0845C", priceAddon: 1000 },

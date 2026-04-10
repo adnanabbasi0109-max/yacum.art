@@ -46,12 +46,6 @@ const themeColors: Record<string, string> = {
   Knowledge: "bg-gold/20 text-gold",
 };
 
-const printSizes = [
-  { label: "A3", dimensions: "297 x 420mm", priceMultiplier: 1 },
-  { label: "A2", dimensions: "420 x 594mm", priceMultiplier: 1 },
-  { label: "A1", dimensions: "594 x 841mm", priceMultiplier: 1 },
-];
-
 export default function ArtworkDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
@@ -59,8 +53,7 @@ export default function ArtworkDetailPage() {
   const [artwork, setArtwork] = useState<Artwork | null>(null);
   const [loading, setLoading] = useState(true);
   const [purchaseTab, setPurchaseTab] = useState<"digital" | "print">("print");
-  const [selectedSize, setSelectedSize] = useState("A3");
-  const [selectedFrame, setSelectedFrame] = useState("none");
+  const [selectedFrame, setSelectedFrame] = useState("thin-black");
   const [wallColor, setWallColor] = useState<"light" | "dark">("light");
   const [addedToCart, setAddedToCart] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
@@ -103,8 +96,7 @@ export default function ArtworkDetailPage() {
     );
   }
 
-  const currentSizeOption = printSizes.find((s) => s.label === selectedSize) || printSizes[0];
-  const printPrice = Math.round(artwork.printPriceBase * currentSizeOption.priceMultiplier);
+  const printPrice = artwork.printPriceBase;
 
   return (
     <>
@@ -124,7 +116,7 @@ export default function ArtworkDetailPage() {
             {/* Artwork with frame preview */}
             {(() => {
               const frame = frameOptions.find((f) => f.id === selectedFrame);
-              const showFrame = purchaseTab === "print" && frame && frame.id !== "none";
+              const showFrame = purchaseTab === "print" && !!frame;
               const isPrintTab = purchaseTab === "print";
               const isHorizontal = artwork.orientation === "horizontal";
 
@@ -329,34 +321,10 @@ export default function ArtworkDetailPage() {
                   transition={{ duration: 0.3 }}
                   className="space-y-6"
                 >
-                  {/* Size selector */}
-                  <div className="space-y-3">
-                    <h4 className="text-text-secondary text-xs tracking-widest uppercase">
-                      Print Size
-                    </h4>
-                    <div className="flex gap-3">
-                      {printSizes.map((size) => (
-                        <button
-                          key={size.label}
-                          onClick={() => setSelectedSize(size.label)}
-                          className={`flex-1 py-3 border text-center transition-colors duration-200 ${
-                            selectedSize === size.label
-                              ? "border-gold text-gold"
-                              : "border-border-subtle text-text-secondary hover:border-white/10"
-                          }`}
-                        >
-                          <span className="block text-sm font-[family-name:var(--font-mono)]">
-                            {size.label}
-                          </span>
-                          <span className="block text-[10px] text-text-secondary mt-1">
-                            {size.dimensions}
-                          </span>
-                          <span className="block text-[10px] text-gold font-[family-name:var(--font-mono)] mt-1">
-                            ₹{(artwork.printPriceBase * size.priceMultiplier / 100).toFixed(0)}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-gold text-2xl font-[family-name:var(--font-mono)]">
+                      ₹{(printPrice / 100).toFixed(0)}
+                    </span>
                   </div>
 
                   {/* Frame selector */}
@@ -386,7 +354,7 @@ export default function ArtworkDetailPage() {
                   arabic: artwork.arabic,
                   previewImageUrl: artwork.previewImageUrl,
                   type: purchaseTab,
-                  printSize: purchaseTab === "print" ? selectedSize : undefined,
+                  printSize: undefined,
                   frameOption: purchaseTab === "print" ? selectedFrame : undefined,
                   price,
                 });
