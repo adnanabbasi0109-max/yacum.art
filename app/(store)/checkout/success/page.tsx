@@ -125,7 +125,7 @@ function SuccessContent() {
               Payment Successful
             </h1>
             <p className="text-text-secondary text-sm mb-8">
-              Thank you for your purchase. Your downloads should start automatically.
+              Thank you for your purchase.
             </p>
 
             {/* Download links */}

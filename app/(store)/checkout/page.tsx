@@ -29,7 +29,7 @@ export default function CheckoutPage() {
     name: "",
     address: "",
     city: "",
-    country: "",
+    country: "India",
     zip: "",
   });
   const [processing, setProcessing] = useState(false);
@@ -272,14 +272,13 @@ export default function CheckoutPage() {
                           className="w-full bg-transparent border border-border-subtle px-4 py-3 text-text-primary text-sm placeholder:text-text-secondary/50 focus:border-gold focus:outline-none transition-colors"
                         />
                       </div>
-                      <input
-                        type="text"
-                        name="country"
-                        placeholder="Country"
-                        value={form.country}
-                        onChange={handleChange}
-                        className="w-full bg-transparent border border-border-subtle px-4 py-3 text-text-primary text-sm placeholder:text-text-secondary/50 focus:border-gold focus:outline-none transition-colors"
-                      />
+                      <div className="w-full bg-transparent border border-border-subtle px-4 py-3 text-text-secondary text-sm flex items-center justify-between">
+                        <span>Country</span>
+                        <span className="text-gold">India</span>
+                      </div>
+                      <p className="text-text-secondary text-xs">
+                        Shipping currently available in India only.
+                      </p>
                     </div>
                   </div>
                 )}
