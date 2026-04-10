@@ -48,8 +48,8 @@ const themeColors: Record<string, string> = {
 
 const printSizes = [
   { label: "A3", dimensions: "297 x 420mm", priceMultiplier: 1 },
-  { label: "A2", dimensions: "420 x 594mm", priceMultiplier: 1.5 },
-  { label: "A1", dimensions: "594 x 841mm", priceMultiplier: 2.2 },
+  { label: "A2", dimensions: "420 x 594mm", priceMultiplier: 1 },
+  { label: "A1", dimensions: "594 x 841mm", priceMultiplier: 1 },
 ];
 
 export default function ArtworkDetailPage() {
