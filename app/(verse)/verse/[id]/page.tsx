@@ -57,7 +57,7 @@ export default function VersePage() {
     if (params.id) fetchVerse();
   }, [params.id]);
 
-  const artworkUrl = verse ? `https://yacum.art/artwork/${verse.slug}` : window.location.href;
+  const artworkUrl = verse ? `https://yacum.art/artwork/${verse.slug}` : (typeof window !== 'undefined' ? window.location.href : 'https://yacum.art');
 
   const handleCopyUrl = useCallback(async () => {
     try {
